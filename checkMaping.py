@@ -66,10 +66,12 @@ class chcekJson(object):
         try:
             validate(instance=jsonStr, schema=self._schema)
         except Exception:
-            logging.info("Json文件格式错误，需要对应模板格式！")
-            return validate.exceptions.ValidationError
+            logging.error("Json文件格式错误，需要对应模板格式！%s" % jsonStr)
+            logging.error(validate.exceptions.ValidationError)
+            return False
         else:
-            return ("Json文件格式验证通过！")
+            logging.info("Json文件格式验证通过！")
+            return True
 
 
 if __name__ == '__main__':

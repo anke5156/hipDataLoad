@@ -19,6 +19,27 @@ class Mapping(object):
     def __init__(self, fileName):
         self.fileName = fileName
 
+        with open(self.fileName, 'r', encoding='utf-8') as f:
+            # 将类文件对象中的JSON字符串直接转换成Python字典
+            self.mapstr = json.load(f)
+            # 校验配置的mapping数据格式
+            assert chcekJson().check(self.mapstr)
+            # 获取json中的表信息
+            self.source = self.mapstr['source']  # 数据源eg:12306,hanting,zhenaiwang...
+            self.database = self.mapstr['database']
+            self.table = self.mapstr['table']
+            # 字段映射成身份证号、邮箱、手机号、、、
+            self.mapping_ = self.mapstr['fieldMapping']
+            self.uuid = self.mapping_['uuid']
+            self.sfzh = self.mapping_['sfzh']
+            self.user_name = self.mapping_['user_name']
+            self.email = self.mapping_['email']
+            self.phoneno = self.mapping_['phoneno']
+            self.password = self.mapping_['password']
+            self.explode_time = self.mapping_['explode_time']
+            self.confidence = self.mapping_['confidence']
+            self.source_table = self.mapping_['source_table']
+
     def _ruleMatching(self, col, rule, position):
         """
         规则转换，对json定义的字段规则进行转换,输出转换后的字段
@@ -151,35 +172,36 @@ class Mapping(object):
         :return: 拼接好的sql
         """
         assert isinstance(targetType, str)
-        with open(self.fileName, 'r', encoding='utf-8') as f:
-            # 将类文件对象中的JSON字符串直接转换成Python字典
-            mapstr = json.load(f)
-            logging.info(chcekJson().check(mapstr))
-            # 获取json中的表信息
-            self.source = mapstr['source']  # 数据源eg:12306,hanting,zhenaiwang...
-            self.database = mapstr['database']
-            self.table = mapstr['table']
-            # 字段映射成身份证号、邮箱、手机号、、、
-            mapping_ = mapstr['fieldMapping']
-            self.uuid = mapping_['uuid']
-            self.sfzh = mapping_['sfzh']
-            self.user_name = mapping_['user_name']
-            self.email = mapping_['email']
-            self.phoneno = mapping_['phoneno']
-            self.password = mapping_['password']
-            self.explode_time = mapping_['explode_time']
-            self.confidence = mapping_['confidence']
-            self.source_table = mapping_['source_table']
+        # with open(self.fileName, 'r', encoding='utf-8') as f:
+        #     # 将类文件对象中的JSON字符串直接转换成Python字典
+        #     mapstr = json.load(f)
+        #     # 校验配置的mapping数据格式
+        #     assert chcekJson().check(mapstr)
+        #     # 获取json中的表信息
+        #     self.source = mapstr['source']  # 数据源eg:12306,hanting,zhenaiwang...
+        #     self.database = mapstr['database']
+        #     self.table = mapstr['table']
+        #     # 字段映射成身份证号、邮箱、手机号、、、
+        #     mapping_ = mapstr['fieldMapping']
+        #     self.uuid = mapping_['uuid']
+        #     self.sfzh = mapping_['sfzh']
+        #     self.user_name = mapping_['user_name']
+        #     self.email = mapping_['email']
+        #     self.phoneno = mapping_['phoneno']
+        #     self.password = mapping_['password']
+        #     self.explode_time = mapping_['explode_time']
+        #     self.confidence = mapping_['confidence']
+        #     self.source_table = mapping_['source_table']
 
-            col = []
-            # 获取json中的字段，并拼接字符串
-            for k, v in mapping_.items():
-                # 获取json中配置的字段规则，并进行字段转换
-                rul = mapstr['rule'].get(v)
-                v_ = self._ruleMatching(v, rul, 1)
-                col.append(v_)
-            c2_ = ','.join(col)
-            return self._buildSql(c2_, targetType)
+        col = []
+        # 获取json中的字段，并拼接字符串
+        for k, v in self.mapping_.items():
+            # 获取json中配置的字段规则，并进行字段转换
+            rul = self.mapstr['rule'].get(v)
+            v_ = self._ruleMatching(v, rul, 1)
+            col.append(v_)
+        c2_ = ','.join(col)
+        return self._buildSql(c2_, targetType)
 
 
 if __name__ == '__main__':

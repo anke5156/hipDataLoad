@@ -27,14 +27,14 @@ class CmdThread(Thread):
         if isComeon:
             status = 0
             result = ''
-            # logging.info(self.cmd)
-            status, result = subprocess.getstatusoutput(self.cmd)
+            logging.info(self.cmd)
+            # status, result = subprocess.getstatusoutput(self.cmd)
             if status == 0:
                 logging.info('[****命令【%s】执行成功，退出进程!****]' % self.cmd)
                 logging.info('[****执行结果【%s】****]' % result)
                 self.isSuccess = True
             else:
-                logging.info('[****命令【%s】执行失败! status=【%d】 result=【%s】进程退出!****]' % (
+                logging.error('[****命令【%s】执行失败! status=【%d】 result=【%s】进程退出!****]' % (
                     self.cmd, status, result))
 
 

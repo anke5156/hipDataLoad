@@ -1,29 +1,17 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-
+import os
 
 from apscheduler.schedulers.blocking import BlockingScheduler
-import logging
-import json
 from transforData import Mapping
 from command import Command
 from logSplit import splitlog
 from utils.propertiesUtiil import Properties
-
-# from threadpool import Master
-# from command import Command
-# from config import Config
-# from sqoopconfig import Sqoopconfig
-# import checktask
-# import logsplit
+from assemblyTask import AssemblyTask as ak
+import logging
 import time
 import subprocess
-from cmdThread import CmdThread
-
-# import utils
-# import sys
-# sys.path.append("..")
-# from src.predictauto import *
+import json
 
 '''
 @author:    anke
@@ -56,37 +44,18 @@ def tick():
     mark = str(time.time())
     logging.info('%s' % mark)
 
-    mp = Mapping('mappings/tb_ml_test.json')
-    sql1 = mp.getSql('20')
+    for dirpath, dirnames, filenames in os.walk('mappings'):
+        for filename in filenames:
+            if filename.endswith('json'):
+                i = os.path.join(dirpath, filename)
+                with open(i, 'r') as f:
+                    logging.info('正在处理【%s】文件' % f.name)
 
-    {'ls': ['pwd'], 'whoami': []}
-    sql1 = 'date'
-    sql2 = 'll'
-    sql3 = 'whoami'
-    sql4 = 'ps -ef'
+                    aks = ak().assemb(f.name)
+                    strJson = json.loads(aks)
 
-    dic1 = dict()
-    dic2 = dict()
-
-    sqls = []
-    sqls.append(sql1)
-    sqls.append(sql2)
-    sqls.append(sql3)
-    sqls.append(sql4)
-
-    dic2[sql1] = []
-    dic2[sql2] = [sql1]
-    dic2[sql3] = [sql1]
-    dic2[sql4] = [sql1]
-
-    jsStr = json.dumps(dic2)
-    print(dic1)
-    print(dic2)
-    print(jsStr)
-
-    cmd = Command()
-    strJson = json.loads(jsStr)
-    cmd.execute_layer_command(sqls, strJson)
+                    cmd = Command()
+                    cmd.execute_layer_command(strJson, strJson)
 
     logFile = Properties('config.perporties').get("logFile")
 

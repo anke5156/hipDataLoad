@@ -40,7 +40,7 @@ class Command(object):
                     logging.info('[****命令【%s】依赖命令【%s】，但是依赖命令没有完成****]' % (cmd, rely))
                     is_ready = False
             if not is_ready:
-                logging.info('[****暂时跳过【%s】命令! ****]' % cmd)
+                logging.warn('[****暂时跳过【%s】命令! ****]' % cmd)
                 continue
             logging.info('[****即将开始执行【%s】命令!****]' % cmd)
 
@@ -70,13 +70,13 @@ class Command(object):
             cmds = layerCmds.keys()
             isSucc = self.execute_layer_command(cmds, layerCmds)
             if not isSucc:
-                logging.info('[****任务失败在第【%d】层 ****]' % cmdLayer)
+                logging.error('[****任务失败在第【%d】层 ****]' % cmdLayer)
                 is_success = False
                 break
         if is_success:
             logging.info('[****任务执行成功!****]')
         else:
-            logging.info('[****任务执行失败!****]')
+            logging.error('[****任务执行失败!****]')
         return is_success, self.complete
 
 
