@@ -91,4 +91,4 @@ class AssemblyTask(object):
 
 
 if __name__ == '__main__':
-    AssemblyTask().assemb()
+    AssemblyTask().assemb('mappings/tb_ml_test.json')
