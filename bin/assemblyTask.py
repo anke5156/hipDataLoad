@@ -12,8 +12,8 @@
 import json
 import logging
 
-from bin.propertiesUtiil import Properties
-from bin.transforData import Mapping
+from propertiesUtiil import Properties
+from transforData import Mapping
 
 
 class AssemblyTask(object):

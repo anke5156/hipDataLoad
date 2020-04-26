@@ -4,8 +4,8 @@
 import json
 import logging
 
-from bin.checkMaping import chcekJson
-from bin.propertiesUtiil import Properties
+from checkMaping import chcekJson
+from propertiesUtiil import Properties
 
 '''
 @author:    anke

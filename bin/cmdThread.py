@@ -5,7 +5,7 @@ from threading import Thread
 import subprocess
 import logging
 
-from bin.propertiesUtiil import Properties
+from propertiesUtiil import Properties
 
 '''
 @author:    anke

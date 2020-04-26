@@ -5,7 +5,7 @@ import json
 import logging
 from jsonschema import validate
 
-from bin.propertiesUtiil import Properties
+from propertiesUtiil import Properties
 
 '''
 @author:    anke

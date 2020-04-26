@@ -2,8 +2,10 @@
 # -*- coding: UTF-8 -*-
 import logging
 
-from bin.cmdThread import CmdThread
-from bin.propertiesUtiil import Properties
+from cmdThread import CmdThread
+from propertiesUtiil import Properties
+import sys
+sys.path.append('..')
 from config.configTask import ConfigTask
 
 '''

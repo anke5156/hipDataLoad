@@ -5,10 +5,10 @@ import logging
 import os
 import subprocess
 import time
-from bin.assemblyTask import AssemblyTask as ak
-from bin.logSplit import splitlog
-from bin.propertiesUtiil import Properties
-from bin.command import Command
+from assemblyTask import AssemblyTask as ak
+from logSplit import splitlog
+from propertiesUtiil import Properties
+from command import Command
 
 '''
 @author:    anke
