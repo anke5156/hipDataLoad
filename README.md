@@ -14,10 +14,10 @@
 `nohup python scheJobHip.py &`
 
 **工程结构**
->.
+>.  
 |____bin  代码路径  
 | |____command.py  
-| |____propertiesUtiil.py  
+| |____propertiesUtiil.py      
 | |____transforData.py  
 | |____checkMaping.py  
 | |____logSplit.py  
@@ -31,7 +31,7 @@
 |____README.md  
 |____logs  日志文件路基  
 | |____test.log  
-| |____test.log.2020-04-26  
+| |____test.log.2020-04-26     
 |____mappings  映射文件路径  
 | |____tb_ml_test2.json  
 | |____tb_ml_test.json  
