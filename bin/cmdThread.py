@@ -5,6 +5,8 @@ from threading import Thread
 import subprocess
 import logging
 
+from bin.propertiesUtiil import Properties
+
 '''
 @author:    anke
 @contact:   anke.wang@foxmail.com
@@ -42,8 +44,8 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
                         datefmt='%a,%d %b %Y %H:%M:%S',
-                        filename='../logs/test.log',
+                        filename=Properties('../config/config.conf').get("logFile"),
                         filemode='a'
                         )
-    cm = CmdThread(1, "pwd",)
+    cm = CmdThread(1, "pwd", )
     cm.run()

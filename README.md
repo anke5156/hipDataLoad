@@ -25,13 +25,13 @@
 | |____assemblyTask.py  
 | |____cmdThread.py  
 |____config  配置文件路基  
-| |____config.perporties  
+| |____config.conf  
 | |____configTask.py  
 |____script  
 |____README.md  
 |____logs  日志文件路基  
-| |____test.log  
-| |____test.log.2020-04-26     
+| |____hipdataload.log  
+| |____hipdataload.log.2020-04-26     
 |____mappings  映射文件路径  
 | |____tb_ml_test2.json  
 | |____tb_ml_test.json  

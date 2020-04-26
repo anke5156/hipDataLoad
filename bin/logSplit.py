@@ -16,7 +16,6 @@ def splitlog(filename, mark):
     isStart = False
     logFileDaily = '%s.%s' % (filename, time.strftime('%Y-%m-%d'))
     newlog = open(logFileDaily, 'w')
-    # newlog = open(ddd, 'w')
     with open(filename, 'r+') as f:
         while True:
             line = f.readline()
@@ -31,4 +30,4 @@ def splitlog(filename, mark):
 
 
 if __name__ == '__main__':
-    splitlog('../logs/test.log', '1587863489.224271')
+    splitlog('../logs/hipdataload.log', '1587863489.224271')

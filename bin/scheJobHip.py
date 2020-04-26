@@ -5,11 +5,9 @@ import logging
 import os
 import subprocess
 import time
-
 from bin.assemblyTask import AssemblyTask as ak
 from bin.logSplit import splitlog
 from bin.propertiesUtiil import Properties
-
 from bin.command import Command
 
 '''
@@ -56,7 +54,7 @@ def tick():
                     cmd = Command()
                     cmd.execute_layer_command(strJson, strJson)
 
-    logFile = Properties('../config/config.perporties').get("logFile")
+    logFile = Properties('../config/config.conf').get("logFile")
 
     splitlog(logFile, mark)
     res = True
@@ -68,7 +66,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
                         datefmt='%a,%d %b %Y %H:%M:%S',
-                        filename=Properties('../config/config.perporties').get("logFile"),
+                        filename=Properties('../config/config.conf').get("logFile"),
                         filemode='a'
                         )
     tick()

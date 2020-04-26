@@ -3,6 +3,7 @@
 import logging
 
 from bin.cmdThread import CmdThread
+from bin.propertiesUtiil import Properties
 from config.configTask import ConfigTask
 
 '''
@@ -85,7 +86,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
                         datefmt='%a,%d %b %Y %H:%M:%S',
-                        filename='../logs/test.log',
+                        filename=Properties('../config/config.conf').get("logFile"),
                         filemode='a'
                         )
     cmd = Command(ConfigTask(), [])
