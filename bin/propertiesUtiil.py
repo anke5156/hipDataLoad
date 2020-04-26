@@ -1,8 +1,5 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-import re
-import os
-import tempfile
 
 '''
 @author:    anke
@@ -15,7 +12,7 @@ import tempfile
 
 
 class Properties:
-    def __init__(self, configName='../config.perporties'):
+    def __init__(self, configName='../config/config.perporties'):
         self.perporties_name = configName
         self.properties = {}
         try:

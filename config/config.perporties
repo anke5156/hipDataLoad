@@ -1,0 +1,2 @@
+logFile = ../logs/test.log
+task = 3

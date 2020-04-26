@@ -6,41 +6,25 @@
 
 **工程结构**
 >.
-|____command.py
-|____config.perporties
-|____transforData.py
-|____checkMaping.py
-|____utils
-| |____propertiesUtiil.py
-| |______pycache__
-| | |____propertiesUtiil.cpython-37.pyc
-|____logSplit.py
-|______pycache__
-| |____cmdThread.cpython-37.pyc
-| |____transforData.cpython-37.pyc
-| |____configTask.cpython-37.pyc
-| |____assemblyTask.cpython-37.pyc
-| |____command.cpython-37.pyc
-| |____checkMaping.cpython-37.pyc
-| |____logSplit.cpython-37.pyc
-|____README.md
-|____scheJobHip.py
-|____logs
-| |____test.log
-| |____test.log.2020-04-26
-|____assemblyTask.py
-|____mappings
-| |____tb_ml_test2.json
-| |____tb_ml_test.json
-|____configTask.py
-|____cmdThread.py
-|____.idea
-| |____encodings.xml
-| |____inspectionProfiles
-| | |____profiles_settings.xml
-| |____hipDataLoad.iml
-| |____vcs.xml
-| |____workspace.xml
-| |____modules.xml
-| |____misc.xml
-|____sql
+|____bin  代码路径  
+| |____command.py  
+| |____propertiesUtiil.py  
+| |____transforData.py  
+| |____checkMaping.py  
+| |____logSplit.py  
+| |____scheJobHip.py  
+| |____assemblyTask.py  
+| |____cmdThread.py  
+|____config  配置文件路基  
+| |____config.perporties  
+| |____configTask.py  
+|____script  
+|____README.md  
+|____logs  日志文件路基  
+| |____test.log  
+| |____test.log.2020-04-26  
+|____mappings  映射文件路径  
+| |____tb_ml_test2.json  
+| |____tb_ml_test.json  
+|____sql  执行sql路径  
+| |____t_ml_ttt.sql  
