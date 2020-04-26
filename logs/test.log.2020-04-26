@@ -1,0 +1,11 @@
+Sun,26 Apr 2020 11:55:13 scheJobHip.py[line:57] INFO 1587873313.260936
+Sun,26 Apr 2020 11:55:13 transforData.py[line:157] INFO Json文件格式验证通过！
+Sun,26 Apr 2020 11:55:13 command.py[line:45] INFO [****即将开始执行【date】命令!****]
+Sun,26 Apr 2020 11:55:13 command.py[line:40] INFO [****命令【ll】依赖命令【date】，但是依赖命令没有完成****]
+Sun,26 Apr 2020 11:55:13 command.py[line:43] INFO [****暂时跳过【ll】命令! ****]
+Sun,26 Apr 2020 11:55:13 command.py[line:40] INFO [****命令【whoami】依赖命令【date】，但是依赖命令没有完成****]
+Sun,26 Apr 2020 11:55:13 command.py[line:43] INFO [****暂时跳过【whoami】命令! ****]
+Sun,26 Apr 2020 11:55:13 command.py[line:40] INFO [****命令【ps -ef】依赖命令【date】，但是依赖命令没有完成****]
+Sun,26 Apr 2020 11:55:13 command.py[line:43] INFO [****暂时跳过【ps -ef】命令! ****]
+Sun,26 Apr 2020 11:55:13 cmdThread.py[line:33] INFO [****命令【date】执行成功，退出进程!****]
+Sun,26 Apr 2020 11:55:13 cmdThread.py[line:34] INFO [****执行结果【Sun Apr 26 11:55:13 CST 2020】****]

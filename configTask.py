@@ -4,7 +4,7 @@
 '''
 @author:    anke
 @contact:   anke.wang@foxmail.com
-@file:      config.py
+@file:      configTask.py
 @time:      2020/4/23 3:03 PM
 
 @desc:      configuration of the job
@@ -18,7 +18,7 @@
 '''
 
 
-class Config(object):
+class ConfigTask(object):
     def __init__(self):
         self.cfg = {
             1: {'pwd': []},

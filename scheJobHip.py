@@ -7,6 +7,8 @@ import logging
 import json
 from transforData import Mapping
 from command import Command
+from logSplit import splitlog
+from utils.propertiesUtiil import Properties
 
 # from threadpool import Master
 # from command import Command
@@ -50,7 +52,9 @@ def ScheJobHip(func):
 
 
 def tick():
+    # 日志开始切割的标识
     mark = str(time.time())
+    logging.info('%s' % mark)
 
     mp = Mapping('mappings/tb_ml_test.json')
     sql1 = mp.getSql('20')
@@ -84,7 +88,9 @@ def tick():
     strJson = json.loads(jsStr)
     cmd.execute_layer_command(sqls, strJson)
 
-    logging.info('%s' % mark)
+    logFile = Properties('config.perporties').get("logFile")
+
+    splitlog(logFile, mark)
     res = True
     if res:
         pass
@@ -94,7 +100,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
                         datefmt='%a,%d %b %Y %H:%M:%S',
-                        filename='./logs/test.log',
+                        filename=Properties('config.perporties').get("logFile"),
                         filemode='a'
                         )
     tick()

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 import logging
-from config import Config
+from configTask import ConfigTask
 from cmdThread import CmdThread
 
 '''
@@ -11,12 +11,12 @@ from cmdThread import CmdThread
 @time:      2020/4/25 4:36 PM
 
 @desc:      execute the command which 
-            configure in config.py
+            configure in configTask.py
 '''
 
 
 class Command(object):
-    def __init__(self, config=Config(), completeList=[]):
+    def __init__(self, config=ConfigTask(), completeList=[]):
         # 配置文件
         self.cfg = config.cfg
         # 已经执行完成的命令
@@ -87,7 +87,7 @@ if __name__ == '__main__':
                         filename='./logs/test.log',
                         filemode='a'
                         )
-    cmd = Command(Config(), [])
+    cmd = Command(ConfigTask(), [])
     cmd.execute_cmds()
 
     cmd = Command()
