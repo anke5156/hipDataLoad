@@ -210,7 +210,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
                         datefmt='%a,%d %b %Y %H:%M:%S',
-                        filename=Properties('../config/config.conf').get("logFile"),
+                        filename=Properties().get("logFile"),
                         filemode='a'
                         )
     c = Mapping(fileName='../mappings/tb_ml_test.json')

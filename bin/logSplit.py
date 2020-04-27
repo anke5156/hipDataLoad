@@ -2,6 +2,8 @@
 # -*- coding: UTF-8 -*-
 import time
 
+from propertiesUtiil import Properties
+
 '''
 @author:    anke
 @contact:   anke.wang@foxmail.com
@@ -30,4 +32,4 @@ def splitlog(filename, mark):
 
 
 if __name__ == '__main__':
-    splitlog('../logs/hipdataload.log', '1587863489.224271')
+    splitlog(Properties().get("logFile"), '1587863489.224271')

@@ -12,7 +12,7 @@
 
 
 class Properties:
-    def __init__(self, configName='../config/config.conf'):
+    def __init__(self, configName='../config/config.properties'):
         self.perporties_name = configName
         self.properties = {}
         try:
