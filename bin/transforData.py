@@ -40,13 +40,13 @@ class Mapping(object):
             self.password = self.mapping_['password']
             self.explode_time = self.mapping_['explode_time']
             self.confidence = self.mapping_['confidence']
-            self.source_table = self.mapping_['source_table']
+            self.source_table = self.table
 
     def _ruleMatching(self, col, rule, position):
         """
         规则转换，对json定义的字段规则进行转换,输出转换后的字段
         :param col: 需要做规则转换的列名称
-        :param rule:转换规则 where条件不为空：not_null；查询替换空为null:convert_empty,该规则根据实际情况可以不断新增 
+        :param rule:转换规则 where条件不为空：not_null；查询处理null:convert_empty,该规则根据实际情况可以不断新增 
         :param position:1.处理查询字段，2.处理where条件为空，3.计算置信度 
         :return: 根据规则转换之后的列名称
         eg:1：case when tag6='' or upper(tag6)='NULL' then null else tag6 end
@@ -54,20 +54,30 @@ class Mapping(object):
         """
         if (rule is None):
             return col
-        elif (position == 1 and rule.__contains__('convert_empty')):
-            return format("case when trim(%s)='' "
-                          "or upper(trim(%s))='NULL' then null "
-                          "else %s end as %s" % (col, col, col, col))
         elif (position == 2 and rule.__contains__('not_null')):
             return format("and upper(trim(%s))!='NULL' "
                           "and trim(%s)!='' "
                           "and %s is not null" % (col, col, col))
+        elif (position == 1 and rule.__contains__('convert_empty')):
+            return format("case when trim(%s)='' "
+                          "or upper(trim(%s))='NULL' then null "
+                          "else trim(%s) end as %s" % (col, col, col, col))
         elif (position == 1 and rule.__contains__('confidence')):
-            return format(
-                "case when length(trim(%s))=11 and substr(%s,1,1)='1' and length(trim(%s)) in (15,18) then '0.9' "
-                "when length(trim(%s))=11 and substr(%s,1,1)='1' or length(trim(%s)) in (15,18) then '0.8' "
-                "else 0.5 end as %s" % (
-                    self.phoneno, self.phoneno, self.sfzh, self.phoneno, self.phoneno, self.sfzh, col))
+            if (self.phoneno == '' and self.sfzh == ''):
+                return '0.5'
+            elif (self.phoneno == '' and self.sfzh != ''):
+                return format(
+                    "case when length(trim(%s)) in (15,18) then '0.8' else 0.5 end as %s" % (self.sfzh, col))
+            elif (self.phoneno != '' and self.sfzh == ''):
+                return format(
+                    "case when length(trim(%s))=11 and substr(trim(%s),1,1)='1' then '0.8' "
+                    "else 0.5 end as %s" % (self.phoneno, self.phoneno, col))
+            else:
+                return format(
+                    "case when length(trim(%s))=11 and substr(trim(%s),1,1)='1' and length(trim(%s)) in (15,18) then '0.9' "
+                    "when length(trim(%s))=11 and substr(trim(%s),1,1)='1' or length(trim(%s)) in (15,18) then '0.8' "
+                    "else 0.5 end as %s" % (
+                        self.phoneno, self.phoneno, self.sfzh, self.phoneno, self.phoneno, self.sfzh, col))
         else:
             return col
 
@@ -101,10 +111,10 @@ class Mapping(object):
         sql = ''
         if (targetType == '20'):
             sql = format("insert into table sgk.t_ml_sgk_small_merge_%s "
-                         "(uuid,sfzh,user_name,email,phoneno,password,explode_time,confidence,source_table) "
-                         "select %s  from %s.%s "
+                         "(uuid,sfzh,user_name,email,phoneno,password,explode_time,confidence,source_table,source) "
+                         "select %s,'%s','%s' from %s.%s "
                          "where 1=1 "
-                         % (self.source, cols, self.database, self.table))
+                         % (self.source, cols, self.database, self.table, self.source, self.table))
         else:
             if (targetType == '01'):
                 sql = "sfzh,phoneno,'01'"
@@ -174,33 +184,13 @@ class Mapping(object):
         :return: 拼接好的sql
         """
         assert isinstance(targetType, str)
-        # with open(self.fileName, 'r', encoding='utf-8') as f:
-        #     # 将类文件对象中的JSON字符串直接转换成Python字典
-        #     mapstr = json.load(f)
-        #     # 校验配置的mapping数据格式
-        #     assert chcekJson().check(mapstr)
-        #     # 获取json中的表信息
-        #     self.source = mapstr['source']  # 数据源eg:12306,hanting,zhenaiwang...
-        #     self.database = mapstr['database']
-        #     self.table = mapstr['table']
-        #     # 字段映射成身份证号、邮箱、手机号、、、
-        #     mapping_ = mapstr['fieldMapping']
-        #     self.uuid = mapping_['uuid']
-        #     self.sfzh = mapping_['sfzh']
-        #     self.user_name = mapping_['user_name']
-        #     self.email = mapping_['email']
-        #     self.phoneno = mapping_['phoneno']
-        #     self.password = mapping_['password']
-        #     self.explode_time = mapping_['explode_time']
-        #     self.confidence = mapping_['confidence']
-        #     self.source_table = mapping_['source_table']
-
         col = []
         # 获取json中的字段，并拼接字符串
         for k, v in self.mapping_.items():
             # 获取json中配置的字段规则，并进行字段转换
             rul = self.mapstr['rule'].get(v)
             v_ = self._ruleMatching(v, rul, 1)
+            v_ = v_ if v_ != '' else 'null'
             col.append(v_)
         c2_ = ','.join(col)
         return self._buildSql(c2_, targetType)
@@ -216,16 +206,12 @@ if __name__ == '__main__':
     c = Mapping(fileName='../mappings/tb_ml_test.json')
     print(c.getSql('20'))
     print(c.getSql('01'))
-    print(c.getSql('02'))
-    print(c.getSql('03'))
-    print(c.getSql('04'))
-    print(c.getSql('05'))
-    print(c.getSql('06'))
-    print(c.getSql('07'))
-    print(c.getSql('08'))
-    print(c.getSql('09'))
-    print(c.getSql('10'))
-    # logging.info(c.ruleMatching('tag6', ["not_null", "convert_empty"], 1))
-    # logging.info(c.ruleMatching('tag6', ["not_null", "convert_empty"], 2))
-    # logging.info(c.ruleMatching('tag6', ["not_null", "convert_empty"], 3))
-    # logging.info(c.ruleMatching('tag6', 'confidence', 1))
+    # print(c.getSql('02'))
+    # print(c.getSql('03'))
+    # print(c.getSql('04'))
+    # print(c.getSql('05'))
+    # print(c.getSql('06'))
+    # print(c.getSql('07'))
+    # print(c.getSql('08'))
+    # print(c.getSql('09'))
+    # print(c.getSql('10'))

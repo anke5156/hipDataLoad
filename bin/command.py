@@ -5,6 +5,7 @@ import logging
 from cmdThread import CmdThread
 from propertiesUtiil import Properties
 import sys
+
 sys.path.append('..')
 from config.configTask import ConfigTask
 
@@ -41,10 +42,10 @@ class Command(object):
             is_ready = True
             for rely in relies:
                 if rely not in self.complete:
-                    logging.info('[****命令【%s】依赖命令【%s】，但是依赖命令没有完成****]' % (cmd, rely))
+                    logging.warning('[****命令【%s】依赖命令【%s】，但是依赖命令没有完成****]' % (cmd, rely))
                     is_ready = False
             if not is_ready:
-                logging.warn('[****暂时跳过【%s】命令! ****]' % cmd)
+                logging.warning('[****暂时跳过【%s】命令! ****]' % cmd)
                 continue
             logging.info('[****即将开始执行【%s】命令!****]' % cmd)
 

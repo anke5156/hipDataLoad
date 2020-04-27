@@ -28,7 +28,7 @@ class CmdThread(Thread):
         isComeon = True
         if isComeon:
             status = 0
-            result = ''
+            result = '假装我就是执行结果'
             logging.info(self.cmd)
             # status, result = subprocess.getstatusoutput(self.cmd)
             if status == 0:

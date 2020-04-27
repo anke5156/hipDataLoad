@@ -35,16 +35,19 @@ class AssemblyTask(object):
 10: 用户名密码关系
 """
         sql20 = mp.getSql('20')
-        sql01 = mp.getSql('01')
-        sql02 = mp.getSql('02')
-        sql03 = mp.getSql('03')
-        sql04 = mp.getSql('04')
-        sql05 = mp.getSql('05')
-        sql06 = mp.getSql('06')
-        sql07 = mp.getSql('07')
-        sql08 = mp.getSql('08')
-        sql09 = mp.getSql('09')
-        sql10 = mp.getSql('10')
+        sql20 = ('hive -e "%s";' % sql20)
+
+        # sql01 = mp.getSql('01')
+        # sql02 = mp.getSql('02')
+        # sql03 = mp.getSql('03')
+        # sql04 = mp.getSql('04')
+        # sql05 = mp.getSql('05')
+        # sql06 = mp.getSql('06')
+        # sql07 = mp.getSql('07')
+        # sql08 = mp.getSql('08')
+        # sql09 = mp.getSql('09')
+        # sql10 = mp.getSql('10')
+
         # sql20 = ('20')
         # sql01 = ('01')
         # sql02 = ('02')
@@ -75,16 +78,16 @@ class AssemblyTask(object):
         # sqls.append(sql10)
 
         taskDic[sql20] = []
-        taskDic[sql01] = [sql20]
-        taskDic[sql02] = [sql20]
-        taskDic[sql03] = [sql20]
-        taskDic[sql04] = [sql20]
-        taskDic[sql05] = [sql20]
-        taskDic[sql06] = [sql20]
-        taskDic[sql07] = [sql20]
-        taskDic[sql08] = [sql20]
-        taskDic[sql09] = [sql20]
-        taskDic[sql10] = [sql20]
+        # taskDic[sql01] = [sql20]
+        # taskDic[sql02] = [sql20]
+        # taskDic[sql03] = [sql20]
+        # taskDic[sql04] = [sql20]
+        # taskDic[sql05] = [sql20]
+        # taskDic[sql06] = [sql20]
+        # taskDic[sql07] = [sql20]
+        # taskDic[sql08] = [sql20]
+        # taskDic[sql09] = [sql20]
+        # taskDic[sql10] = [sql20]
         jsStr = json.dumps(taskDic)
         logging.info(jsStr)
         return jsStr

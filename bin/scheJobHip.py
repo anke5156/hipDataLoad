@@ -47,7 +47,7 @@ def tick():
                 i = os.path.join(dirpath, filename)
                 with open(i, 'r') as f:
                     logging.info('正在处理【%s】文件' % f.name)
-
+                    # 构建任务
                     aks = ak().assemb(f.name)
                     strJson = json.loads(aks)
 

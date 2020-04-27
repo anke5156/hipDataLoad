@@ -23,6 +23,6 @@ class ConfigTask(object):
         self.cfg = {
             1: {'hive -f ../sql/t_ml_ttt.sql':[]},
             2: {'ls': ['pwd'], 'whoami': []},
-            3: {'date': ['pwd', 'ls']}
+            3: {'pwd': ['whoami']}
 
         }

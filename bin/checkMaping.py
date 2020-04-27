@@ -57,9 +57,17 @@ class chcekJson(object):
             "rule": {"type": "object"},
             "fieldMapping": {
                 "type": "object",
-                "required": ["uuid", "sfzh", "user_name", "email", "phoneno", "password", "explode_time",
-                             "confidence",
-                             "source", "source_table"]
+                "required": ["uuid", "sfzh", "user_name", "email", "phoneno", "password", "explode_time", "confidence"],
+                "properties": {
+                    "uuid": {"type": "string", "minLength": 1},
+                    "sfzh": {"type": "string"},
+                    "user_name": {"type": "string"},
+                    "email": {"type": "string"},
+                    "phoneno": {"type": "string"},
+                    "password": {"type": "string"},
+                    "explode_time": {"type": "string"},
+                    "confidence": {"type": "string"}
+                }
             }
         }
     }
@@ -80,19 +88,19 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
                         datefmt='%a,%d %b %Y %H:%M:%S',
-                        filename=Properties('../config/config.properties').get("logFile"),
+                        filename=Properties().get("logFile"),
                         filemode='a'
                         )
     ck = chcekJson()
-    with open("../mappings/tb_ml_test.json", 'r', encoding='utf-8') as f:
+    with open("../mappings/s_ssd_52fangdichan_PC202003300015_result.json", 'r', encoding='utf-8') as f:
         # 将类文件对象中的JSON字符串直接转换成Python字典
         jsonStr_ = json.load(f)
         print(ck.check(jsonStr_))
 
     succData = {
         "source": "12306",
-        "table": "ssd_12306account_result",
         "database": "sgk_source",
+        "table": "ssd_12306account_result",
         "fieldMapping": {
             "uuid": "uuid",
             "sfzh": "tag1",
@@ -100,29 +108,24 @@ if __name__ == '__main__':
             "email": "tag3",
             "phoneno": "tag4",
             "password": "tag5",
-            "explode_time": "tag6",
-            "confidence": "tag7",
-            "source": "tag8",
-            "source_table": "'ssd_12306account_result'"
+            "explode_time": "explode_time",
+            "confidence": "confidence"
         },
         "rule": {
-            "tag1": "not_null",
-            "tag2": [
-                "not_null",
-                "convert_empty"
-            ],
-            "tag5": "convert_empty",
-            "tag6": "not_null",
-            "tag7": "confidence"
+            "sfzh": "not_null",
+            "user_name": ["not_null", "convert_empty"],
+            "email": "convert_empty",
+            "phoneno": "not_null",
+            "confidence": "confidence"
         },
-        "test1": "ddd"
+        "test":"test"
     }
     print(ck.check(succData))
 
     errData = {
         "source": "12306",
-        "table": "ssd_12306account_result",
         "database": "sgk_source",
+        "table": "ssd_12306account_result",
         "fieldMapping": {
             "uuid": "uuid",
             "sfzh": "tag1",
@@ -130,21 +133,16 @@ if __name__ == '__main__':
             "email": "tag3",
             "phoneno": "tag4",
             "password": "tag5",
-            "explode_time": "tag6",
-            "confidence": "tag7",
-            "source": "tag8",
-            "source_table": "'ssd_12306account_result'"
+            "explode_time": "explode_time",
+            "confidence": "confidence"
         },
-        "test": {
-            "tag1": "not_null",
-            "tag2": [
-                "not_null",
-                "convert_empty"
-            ],
-            "tag5": "convert_empty",
-            "tag6": "not_null",
-            "tag7": "confidence"
+        "ruless": {
+            "sfzh": "not_null",
+            "user_name": ["not_null", "convert_empty"],
+            "email": "convert_empty",
+            "phoneno": "not_null",
+            "confidence": "confidence"
         },
-        "test1": "ddd"
+        "test": "test"
     }
     print(ck.check(errData))

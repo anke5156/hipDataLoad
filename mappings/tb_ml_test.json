@@ -1,27 +1,25 @@
 {
   "source": "12306",
-  "table": "ssd_12306account_result",
   "database": "sgk_source",
+  "table": "ssd_12306account_result",
   "fieldMapping": {
     "uuid": "uuid",
-    "sfzh": "tag1",
-    "user_name": "tag2",
-    "email": "tag3",
-    "phoneno": "tag4",
-    "password": "tag5",
-    "explode_time": "tag6",
-    "confidence": "tag7",
-    "source": "tag8",
-    "source_table": "'ssd_12306account_result'"
+    "sfzh": "",
+    "user_name": "",
+    "email": "tag1",
+    "phoneno": "",
+    "password": "tag2",
+    "explode_time": "explode_time",
+    "confidence": "tag3"
   },
   "rule": {
-    "tag1": "not_null",
-    "tag2": [
+    "tag3": "convert_empty",
+    "user_name": [
       "not_null",
       "convert_empty"
     ],
+    "tag4": "convert_empty",
     "tag5": "convert_empty",
-    "tag6": "not_null",
-    "tag7": "confidence"
+    "tag8": "confidence"
   }
 }
