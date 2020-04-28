@@ -130,7 +130,7 @@ class Mapping(object):
                          "(uuid,sfzh,user_name,email,phoneno,password,explode_time,confidence,source_table,source) "
                          "select %s,'%s','%s' from %s.%s "
                          "where 1=1 "
-                         % (self.source, cols, self.database, self.table, self.source, self.table))
+                         % (self.source, cols, self.table, self.source, self.database, self.table))
         else:
             if (targetType == '01'):
                 sql = "sfzh,phoneno,'01'"
