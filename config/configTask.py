@@ -21,8 +21,16 @@
 class ConfigTask(object):
     def __init__(self):
         self.cfg = {
-            1: {'hive -f ../sql/t_ml_ttt.sql':[]},
-            2: {'ls': ['pwd'], 'whoami': []},
-            3: {'pwd': ['whoami']}
-
+            1: {'cmd1-1': []},
+            2: {'cmd2-1': ['cmd1-1'],
+                'cmd2-2': ['cmd2-3'],
+                'cmd2-3': [],
+                'cmd2-4': [],
+                'cmd2-5': ['cmd2-4'],
+                'cmd2-6': [],
+                'cmd2-7': [],
+                'cmd2-8': ['cmd2-2'],
+                'cmd2-9': [],
+                'cmd2-10': []},
+            3: {'cmd3-1': ['cmd2-2']}
         }

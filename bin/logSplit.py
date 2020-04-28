@@ -16,8 +16,11 @@ from propertiesUtiil import Properties
 
 def splitlog(filename, mark):
     isStart = False
-    logFileDaily = '%s.%s' % (filename, time.strftime('%Y-%m-%d'))
-    newlog = open(logFileDaily, 'w')
+    logNameDaily = '%s.%s' % (filename, time.strftime('%Y-%m-%d'))
+    logDaily = open(logNameDaily, 'w')
+
+    logNameCmdsDaily = '%s.excute_command.%s' % (filename,time.strftime('%Y-%m-%d'))
+    logDailyExcute = open(logNameCmdsDaily, 'w')
     with open(filename, 'r+') as f:
         while True:
             line = f.readline()
@@ -26,9 +29,12 @@ def splitlog(filename, mark):
             if line.find(mark) != -1:
                 isStart = True
             if isStart:
-                newlog.write('%s' % line)
+                logDaily.write('%s' % line)
+                if (line.find('EXCUTE_COMMAND')!=-1):
+                    logDailyExcute.write('%s' % line)
         f.close()
-        newlog.close()
+        logDaily.close()
+        logDailyExcute.close()
 
 
 if __name__ == '__main__':
