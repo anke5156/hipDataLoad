@@ -52,34 +52,50 @@ class Mapping(object):
         eg:1：case when tag6='' or upper(tag6)='NULL' then null else tag6 end
            2：and upper(trim(tag6))!='NULL' and trim(tag6)!='' and tag6 is not null
         """
+        c = ''
         if (rule is None):
-            return col
+            c = col
         elif (position == 2 and rule.__contains__('not_null')):
-            return format("and upper(trim(%s))!='NULL' "
-                          "and trim(%s)!='' "
-                          "and %s is not null" % (col, col, col))
+            c = format("and upper(trim(%s))!='NULL' and trim(%s)!='' and %s is not null" % (col, col, col))
         elif (position == 1 and rule.__contains__('convert_empty')):
-            return format("case when trim(%s)='' "
-                          "or upper(trim(%s))='NULL' then null "
-                          "else trim(%s) end as %s" % (col, col, col, col))
+            c = format("case when trim(%s)='' or upper(trim(%s))='NULL' then null else trim(%s) end as %s"
+                       % (col, col, col, col))
         elif (position == 1 and rule.__contains__('confidence')):
-            if (self.phoneno == '' and self.sfzh == ''):
-                return '0.5'
+            """
+                首先判断身份证手机号,俩都有               0.9
+                有身份证或手机号其中一个                  0.8
+                没有身份证手机号，判断邮箱，有邮箱          0.5
+                没有身份证手机号没有邮箱，有用户名和密码	   0.5
+                没有身份证手机号没有邮箱没有密码，只有用户名  0.3
+                其他	                                   0.2
+            """
+            c = 'case'
+            if (self.phoneno != '' and self.sfzh != ''):
+                c = format(
+                    "%s when length(trim(%s))=11 and substr(trim(%s),1,1)='1' and length(trim(%s)) in (15,18) then '0.9' "
+                    "when length(trim(%s))=11 and substr(trim(%s),1,1)='1' or length(trim(%s)) in (15,18) then '0.8'"
+                    % (c, self.phoneno, self.phoneno, self.sfzh, self.phoneno, self.phoneno, self.sfzh))
             elif (self.phoneno == '' and self.sfzh != ''):
-                return format(
-                    "case when length(trim(%s)) in (15,18) then '0.8' else 0.5 end as %s" % (self.sfzh, col))
+                c = format("%s when length(trim(%s)) in (15,18) then '0.8'" % (c, self.sfzh))
             elif (self.phoneno != '' and self.sfzh == ''):
-                return format(
-                    "case when length(trim(%s))=11 and substr(trim(%s),1,1)='1' then '0.8' "
-                    "else 0.5 end as %s" % (self.phoneno, self.phoneno, col))
+                c = format(
+                    "%s when length(trim(%s))=11 and substr(trim(%s),1,1)='1' then '0.8'"
+                    % (c, self.phoneno, self.phoneno))
+            if (self.email != ''):
+                c = format("%s when upper(trim(%s)) like '%s.COM' then '0.5'" % (c, self.email, '%'))
+            if (self.user_name != '' and self.password != ''):
+                c = format("%s when trim(%s)!='' and trim(%s)!='' then '0.5'" % (c, self.user_name, self.password))
+            if (self.user_name != ''):
+                c = format("%s when trim(%s)!='' then '0.3' " % (c, self.user_name))
+            if (self.sfzh == '' and self.phoneno == ''
+                and self.email == '' and self.user_name == ''
+                and self.password == ''):
+                c = "'0.5'"
             else:
-                return format(
-                    "case when length(trim(%s))=11 and substr(trim(%s),1,1)='1' and length(trim(%s)) in (15,18) then '0.9' "
-                    "when length(trim(%s))=11 and substr(trim(%s),1,1)='1' or length(trim(%s)) in (15,18) then '0.8' "
-                    "else 0.5 end as %s" % (
-                        self.phoneno, self.phoneno, self.sfzh, self.phoneno, self.phoneno, self.sfzh, col))
+                c = format("%s else '0.2' end as %s" % (c, col))
         else:
-            return col
+            c = col
+        return c
 
     def _buildSql(self, cols, targetType):
         """
