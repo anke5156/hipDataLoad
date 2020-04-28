@@ -32,12 +32,13 @@ class CmdThread(Thread):
             # status, result = subprocess.getstatusoutput(self.cmd)
             if status == 0:
                 logging.info('[****命令【%s】执行成功，退出进程!****]' % self.cmd)
-                logging.info('[EXCUTE_COMMAND]%s' % self.cmd)
+                logging.info('[EXCUTE_DONE]%s' % self.cmd)
                 logging.info('[****执行结果【%s】****]' % result)
                 self.isSuccess = True
             else:
-                logging.error('[****命令【%s】执行失败! status=【%d】 result=【%s】进程退出!****]' % (
-                    self.cmd, status, result))
+                logging.error('[****命令【%s】执行失败! status=【%d】 result=【%s】进程退出!****]'
+                              % (self.cmd, status, result))
+                logging.error('[EXCUTE_DONE]%s' % self.cmd)
 
 
 if __name__ == '__main__':

@@ -82,7 +82,7 @@ class Mapping(object):
                     "%s when length(trim(%s))=11 and substr(trim(%s),1,1)='1' then '0.8'"
                     % (c, self.phoneno, self.phoneno))
             if (self.email != ''):
-                c = format("%s when upper(trim(%s)) like '%s.COM' then '0.5'" % (c, self.email, '%'))
+                c = format("%s when upper(trim(%s)) like '%s.COM%s' then '0.5'" % (c, self.email, '%', '%'))
             if (self.user_name != '' and self.password != ''):
                 c = format("%s when trim(%s)!='' and trim(%s)!='' then '0.5'" % (c, self.user_name, self.password))
             if (self.user_name != ''):
@@ -119,7 +119,7 @@ class Mapping(object):
         """
         sfzh_ = "and length(trim(sfzh)) in (15,18)"
         phoneno_ = "and length(trim(phoneno))=11 and substr(trim(phoneno),1,1)=1"
-        email_ = "and email like '%.com'"
+        email_ = "and upper(trim(email)) like '%.COM%'"
         user_name_ = "and user_name!=email and upper(trim(user_name))!='NULL' and trim(user_name)!='' and user_name is not null"
         password_ = "and upper(trim(password))!='NULL' and trim(password)!='' and password is not null"
         s1 = ''
@@ -222,12 +222,12 @@ if __name__ == '__main__':
     c = Mapping(fileName='../mappings/tb_ml_test.json')
     print(c.getSql('20'))
     print(c.getSql('01'))
-    # print(c.getSql('02'))
-    # print(c.getSql('03'))
-    # print(c.getSql('04'))
-    # print(c.getSql('05'))
-    # print(c.getSql('06'))
-    # print(c.getSql('07'))
-    # print(c.getSql('08'))
-    # print(c.getSql('09'))
-    # print(c.getSql('10'))
+    print(c.getSql('02'))
+    print(c.getSql('03'))
+    print(c.getSql('04'))
+    print(c.getSql('05'))
+    print(c.getSql('06'))
+    print(c.getSql('07'))
+    print(c.getSql('08'))
+    print(c.getSql('09'))
+    print(c.getSql('10'))

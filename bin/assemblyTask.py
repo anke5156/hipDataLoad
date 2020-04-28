@@ -36,17 +36,26 @@ class AssemblyTask(object):
 """
         sql20 = mp.getSql('20')
         sql20 = ('hive -e "%s";' % sql20)
-
-        # sql01 = mp.getSql('01')
-        # sql02 = mp.getSql('02')
-        # sql03 = mp.getSql('03')
-        # sql04 = mp.getSql('04')
-        # sql05 = mp.getSql('05')
-        # sql06 = mp.getSql('06')
-        # sql07 = mp.getSql('07')
-        # sql08 = mp.getSql('08')
-        # sql09 = mp.getSql('09')
-        # sql10 = mp.getSql('10')
+        sql01 = mp.getSql('01')
+        sql01 = ('hive -e "%s";' % sql01)
+        sql02 = mp.getSql('02')
+        sql02 = ('hive -e "%s";' % sql02)
+        sql03 = mp.getSql('03')
+        sql03 = ('hive -e "%s";' % sql03)
+        sql04 = mp.getSql('04')
+        sql04 = ('hive -e "%s";' % sql04)
+        sql05 = mp.getSql('05')
+        sql05 = ('hive -e "%s";' % sql05)
+        sql06 = mp.getSql('06')
+        sql06 = ('hive -e "%s";' % sql06)
+        sql07 = mp.getSql('07')
+        sql07 = ('hive -e "%s";' % sql07)
+        sql08 = mp.getSql('08')
+        sql08 = ('hive -e "%s";' % sql08)
+        sql09 = mp.getSql('09')
+        sql09 = ('hive -e "%s";' % sql09)
+        sql10 = mp.getSql('10')
+        sql10 = ('hive -e "%s";' % sql10)
 
         # sql20 = ('20')
         # sql01 = ('01')
@@ -59,10 +68,6 @@ class AssemblyTask(object):
         # sql08 = ('08')
         # sql09 = ('09')
         # sql10 = ('10')
-
-        {"20": [], "01": ["20"], "02": ["20"]}
-
-        taskDic = dict()
 
         # sqls = []
         # # sqls.append(sql20)
@@ -77,6 +82,15 @@ class AssemblyTask(object):
         # sqls.append(sql09)
         # sqls.append(sql10)
 
+        {'cmd2-1': [''],
+         'cmd2-2': ['cmd2-1'],
+         'cmd2-3': ['cmd2-1'],
+         'cmd2-4': ['cmd2-1'],
+         'cmd2-5': ['cmd2-1'],
+         'cmd2-6': ['cmd2-1'],
+         'cmd2-7': ['cmd2-1']}
+
+        taskDic = dict()
         taskDic[sql20] = []
         # taskDic[sql01] = [sql20]
         # taskDic[sql02] = [sql20]

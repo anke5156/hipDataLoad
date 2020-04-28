@@ -30,7 +30,7 @@ def splitlog(filename, mark):
                 isStart = True
             if isStart:
                 logDaily.write('%s' % line)
-                if (line.find('EXCUTE_COMMAND')!=-1):
+                if (line.find('EXCUTE_DONE')!=-1):
                     logDailyExcute.write('%s' % line)
         f.close()
         logDaily.close()
