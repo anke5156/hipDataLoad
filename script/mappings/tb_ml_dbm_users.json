@@ -1,0 +1,21 @@
+{
+    "source": "12306铁路",
+    "table": "tb_ml_dbm_users",
+    "database": "dbm_service",
+    "fieldMapping": {
+        "uuid": "uuid",
+        "sfzh": "",
+        "user_name": "",
+        "email": "",
+        "phoneno": "",
+        "password": "password",
+        "explode_time": "explode_time",
+        "confidence": "confidence",
+        "source": "12306铁路",
+        "source_table": "tb_ml_dbm_users"
+    },
+    "rule": {
+        "confidence": "confidence",
+        "password": "not_null"
+    }
+}

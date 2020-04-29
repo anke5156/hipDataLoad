@@ -1,0 +1,22 @@
+{
+    "source": "cesss",
+    "table": "tb_ml_dbm_dbsource",
+    "database": "dbm_service",
+    "fieldMapping": {
+        "uuid": "uuid",
+        "sfzh": "",
+        "user_name": "source_user",
+        "email": "",
+        "phoneno": "",
+        "password": "source_password",
+        "explode_time": "explode_time",
+        "confidence": "confidence",
+        "source": "cesss",
+        "source_table": "tb_ml_dbm_dbsource"
+    },
+    "rule": {
+        "confidence": "confidence",
+        "source_user": "not_null",
+        "source_password": "not_null"
+    }
+}
