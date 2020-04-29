@@ -2,13 +2,12 @@
 # -*- coding: UTF-8 -*-
 
 import json
-import logging
 import sys
 
 from jsonschema import validate
 
 sys.path.append('..')
-from bin.propertiesUtiil import Properties
+from bin.logger import Logger
 
 '''
 @author:    anke
@@ -79,26 +78,21 @@ class ChcekMapping(object):
         try:
             validate(instance=jsonStr, schema=self._schema)
         except Exception:
-            logging.error("Json文件格式错误，需要对应模板格式！%s" % jsonStr)
-            logging.error(validate.exceptions.ValidationError)
+            log.error(f"Json文件格式错误，需要对应模板格式！请检查json文件【{jsonStr}】")
+            log.error(validate.exceptions.ValidationError)
             return False
         else:
-            logging.info("Json文件格式验证通过！")
+            log.info("Json文件格式验证通过！")
             return True
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
-                        datefmt='%a,%d %b %Y %H:%M:%S',
-                        filename=Properties().get("logFile"),
-                        filemode='a'
-                        )
+    log = Logger().logger
     ck = ChcekMapping()
     with open("../mappings/tb_ml_dbm_dbsource.json", 'r', encoding='utf-8') as f:
         # 将类文件对象中的JSON字符串直接转换成Python字典
         jsonStr_ = json.load(f)
-        print(ck.check(jsonStr_))
+        log.info(ck.check(jsonStr_))
 
     succData = {
         "source": "12306",
@@ -123,10 +117,10 @@ if __name__ == '__main__':
         },
         "test": "test"
     }
-    print(ck.check(succData))
+    log.info(ck.check(succData))
 
     errData = {
-        "source": "12306",
+        "err": "12306",
         "database": "sgk_source",
         "table": "ssd_12306account_result",
         "fieldMapping": {
@@ -139,13 +133,14 @@ if __name__ == '__main__':
             "explode_time": "explode_time",
             "confidence": "confidence"
         },
-        "ruless": {
-            "sfzh": "not_null",
-            "user_name": ["not_null", "convert_empty"],
-            "email": "convert_empty",
-            "phoneno": "not_null",
+        "rule": {
+            "tag1": "not_null",
+            "tag2": "not_null",
+            "tag3": "convert_empty",
+            "tag4": "not_null",
+            "tag5": "not_null",
             "confidence": "confidence"
         },
         "test": "test"
     }
-    print(ck.check(errData))
+    log.info(ck.check(errData))
