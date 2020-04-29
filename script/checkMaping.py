@@ -3,9 +3,12 @@
 
 import json
 import logging
+import sys
+
 from jsonschema import validate
 
-from propertiesUtiil import Properties
+sys.path.append('..')
+from bin.propertiesUtiil import Properties
 
 '''
 @author:    anke
@@ -17,7 +20,7 @@ from propertiesUtiil import Properties
 '''
 
 
-class chcekJson(object):
+class ChcekMapping(object):
     '''
     schema = {
         "type": "object",
@@ -91,8 +94,8 @@ if __name__ == '__main__':
                         filename=Properties().get("logFile"),
                         filemode='a'
                         )
-    ck = chcekJson()
-    with open("../mappings/s_ssd_52fangdichan_PC202003300015_result.json", 'r', encoding='utf-8') as f:
+    ck = ChcekMapping()
+    with open("../mappings/tb_ml_dbm_dbsource.json", 'r', encoding='utf-8') as f:
         # 将类文件对象中的JSON字符串直接转换成Python字典
         jsonStr_ = json.load(f)
         print(ck.check(jsonStr_))
@@ -118,7 +121,7 @@ if __name__ == '__main__':
             "phoneno": "not_null",
             "confidence": "confidence"
         },
-        "test":"test"
+        "test": "test"
     }
     print(ck.check(succData))
 
