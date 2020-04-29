@@ -56,31 +56,36 @@ class ExploreMappingRealtion(object):
                 sql = self._buildSql(t, self.database)
                 print(sql)
                 lines = self.db.read(sql)
-                Jm = {}
-                JfieldM = {"uuid": "uuid",
-                           "sfzh": "",
-                           "user_name": "",
-                           "email": "",
-                           "phoneno": "",
-                           "password": "",
-                           "explode_time": "explode_time",
-                           "confidence": "confidence",
-                           "source": "",
-                           "source_table": ""}
-                Jrule = {"confidence": "confidence"}
+                jBase = {}
+                jField = {"uuid": "uuid",
+                          "sfzh": "",
+                          "user_name": "",
+                          "email": "",
+                          "phoneno": "",
+                          "password": "",
+                          "explode_time": "explode_time",
+                          "confidence": "confidence",
+                          "source": "",
+                          "source_table": ""}
+                jRule = {"confidence": "confidence"}
+
                 for l in lines:
                     if l['column_comment'] in self.defatMapping:
-                        JfieldM[self.defatMapping[l['column_comment']]] = l['column_name']
-                        Jrule[l['column_name']] = 'not_null'
-                    Jm['source'] = l['sjly']
-                    Jm['table'] = l['table_name']
-                    Jm['database'] = l['table_schema']
-                    JfieldM['source'] = l['sjly']
-                    JfieldM['source_table'] = l['table_name']
+                        jField[self.defatMapping[l['column_comment']]] = l['column_name']
+                        jRule[l['column_name']] = 'not_null'
+
+                    jField['source'] = l['sjly']
+                    jField['source_table'] = l['table_name']
+
                     self.table = l['table_name'] + '.json'
-                    Jm['fieldMapping'] = JfieldM
-                    Jm['rule'] = Jrule
-                loads = json.dumps(Jm, ensure_ascii=False, indent=4)
+
+                    jBase['source'] = l['sjly']
+                    jBase['table'] = l['table_name']
+                    jBase['database'] = l['table_schema']
+                    jBase['fieldMapping'] = jField
+                    jBase['rule'] = jRule
+
+                loads = json.dumps(jBase, ensure_ascii=False, indent=4)
                 # print(loads)
                 if not os.path.isdir(self.filePath):  # 无文件夹时创建
                     os.makedirs(self.filePath)
