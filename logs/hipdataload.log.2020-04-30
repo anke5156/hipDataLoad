@@ -1,0 +1,9 @@
+2020-04-30 00:38:58,480 scheJobHip.py[line:42] INFO 1588178338.480821
+2020-04-30 00:38:58,481 scheJobHip.py[line:51] INFO 正在处理【../sql/tb_ml_dbm_users.sql】文件
+2020-04-30 00:38:58,481 scheJobHip.py[line:51] INFO 正在处理【../sql/tb_ml_dbm_dbsource.sql】文件
+2020-04-30 00:38:58,481 cmdThread.py[line:37] INFO [****命令【hive -f "../sql/tb_ml_dbm_users.sql"】执行成功，退出进程!****]
+2020-04-30 00:38:58,481 cmdThread.py[line:38] INFO [EXCUTE_DONE]hive -f "../sql/tb_ml_dbm_users.sql"
+2020-04-30 00:38:58,482 cmdThread.py[line:39] INFO [****执行结果【假装我就是执行结果】****]
+2020-04-30 00:38:58,482 cmdThread.py[line:37] INFO [****命令【hive -f "../sql/tb_ml_dbm_dbsource.sql"】执行成功，退出进程!****]
+2020-04-30 00:38:58,482 cmdThread.py[line:38] INFO [EXCUTE_DONE]hive -f "../sql/tb_ml_dbm_dbsource.sql"
+2020-04-30 00:38:58,482 cmdThread.py[line:39] INFO [****执行结果【假装我就是执行结果】****]

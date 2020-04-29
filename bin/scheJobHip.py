@@ -1,14 +1,14 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-import json
-import logging
 import os
 import subprocess
+import sys
 import time
-from assemblyTask import AssemblyTask as ak
-from logSplit import splitlog
-from propertiesUtiil import Properties
-from command import Command
+
+sys.path.append('..')
+from bin.logSplit import splitlog
+from bin.cmdThread import CmdThread
+import bin.logger as log
 
 '''
 @author:    anke
@@ -29,7 +29,7 @@ def ScheJobHip(func):
             if line.find('python scheJobHip.py') != -1:
                 numrows = numrows + 1
         if numrows > 1:
-            logging.info('不予执行!')
+            log.info('不予执行!')
         else:
             return func(**kargs)
 
@@ -39,36 +39,28 @@ def ScheJobHip(func):
 def tick():
     # 日志开始切割的标识
     mark = str(time.time())
-    logging.info('%s' % mark)
+    log.info('%s' % mark)
 
-    for dirpath, dirnames, filenames in os.walk('../mappings'):
+    threadList = []
+    cnt = 1
+    for dirpath, dirnames, filenames in os.walk('../sql'):
         for filename in filenames:
-            if filename.endswith('json'):
+            if filename.endswith('sql'):
                 i = os.path.join(dirpath, filename)
                 with open(i, 'r') as f:
-                    logging.info('正在处理【%s】文件' % f.name)
-                    # 构建任务
-                    aks = ak().assemb(f.name)
-                    strJson = json.loads(aks)
-
-                    cmd = Command()
-                    cmd.execute_layer_command(strJson, strJson)
-
-    logFile = Properties().get("logFile")
-
-    splitlog(logFile, mark)
-    res = True
-    if res:
-        pass
+                    log.info('正在处理【%s】文件' % f.name)
+                    thr = CmdThread(cnt, f'hive -f "{f.name}"')
+                    threadList.append(thr)
+    for t in threadList:
+        t.start()
+    for t in threadList:
+        t.join()
+        if t.isSuccess:
+            pass
+    splitlog('../logs/hipdataload.log', mark)
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
-                        datefmt='%a,%d %b %Y %H:%M:%S',
-                        filename=Properties().get("logFile"),
-                        filemode='a'
-                        )
     tick()
     # sched = BlockingScheduler()
     # sched.daemonic = False

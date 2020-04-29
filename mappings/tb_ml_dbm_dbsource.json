@@ -11,8 +11,8 @@
         "password": "source_password",
         "explode_time": "explode_time",
         "confidence": "confidence",
-        "source": "cesss",
-        "source_table": "tb_ml_dbm_dbsource"
+        "source_table": "tb_ml_dbm_dbsource",
+        "source": "cesss"
     },
     "rule": {
         "confidence": "confidence",

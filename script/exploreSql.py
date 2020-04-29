@@ -2,10 +2,9 @@
 # -*- coding: UTF-8 -*-
 
 import json
-import logging
+import os
 
-from checkMaping import chcekJson
-from propertiesUtiil import Properties
+from script.checkMaping import ChcekMapping
 
 '''
 @author:    anke
@@ -17,29 +16,28 @@ from propertiesUtiil import Properties
 '''
 
 
-class Mapping(object):
+class ExploteSql(object):
     def __init__(self, fileName):
         self.fileName = fileName
-
         with open(self.fileName, 'r', encoding='utf-8') as f:
             # 将类文件对象中的JSON字符串直接转换成Python字典
-            self.mapstr = json.load(f)
+            self.jBase = json.load(f)
             # 校验配置的mapping数据格式
-            assert chcekJson().check(self.mapstr)
+            assert ChcekMapping().check(self.jBase)
             # 获取json中的表信息
-            self.source = self.mapstr['source']  # 数据源eg:12306,hanting,zhenaiwang...
-            self.database = self.mapstr['database']
-            self.table = self.mapstr['table']
+            self.source = self.jBase['source']
+            self.database = self.jBase['database']
+            self.table = self.jBase['table']
             # 字段映射成身份证号、邮箱、手机号、、、
-            self.mapping_ = self.mapstr['fieldMapping']
-            self.uuid = self.mapping_['uuid']
-            self.sfzh = self.mapping_['sfzh']
-            self.user_name = self.mapping_['user_name']
-            self.email = self.mapping_['email']
-            self.phoneno = self.mapping_['phoneno']
-            self.password = self.mapping_['password']
-            self.explode_time = self.mapping_['explode_time']
-            self.confidence = self.mapping_['confidence']
+            self.jField = self.jBase['fieldMapping']
+            self.uuid = self.jField['uuid']
+            self.sfzh = self.jField['sfzh']
+            self.user_name = self.jField['user_name']
+            self.email = self.jField['email']
+            self.phoneno = self.jField['phoneno']
+            self.password = self.jField['password']
+            self.explode_time = self.jField['explode_time']
+            self.confidence = self.jField['confidence']
             self.source_table = self.table
 
     def _ruleMatching(self, col, rule, position):
@@ -88,9 +86,8 @@ class Mapping(object):
             if (self.user_name != ''):
                 c = format("%s when trim(%s)!='' then '0.3' " % (c, self.user_name))
             if (self.sfzh == '' and self.phoneno == ''
-                and self.email == '' and self.user_name == ''
-                and self.password == ''):
-                c = "'0.5'"
+                    and self.email == '' and self.user_name == ''):
+                c = "'0.2'"
             else:
                 c = format("%s else '0.2' end as %s" % (c, col))
         else:
@@ -128,9 +125,9 @@ class Mapping(object):
         if (targetType == '20'):
             sql = format("insert into table sgk.t_ml_sgk_small_merge_%s "
                          "(uuid,sfzh,user_name,email,phoneno,password,explode_time,confidence,source_table,source) "
-                         "select %s,'%s','%s' from %s.%s "
-                         "where 1=1 "
-                         % (self.source, cols, self.table, self.source, self.database, self.table))
+                         "select %s from sgk_source.%s "
+                         "where 1=1 ;"
+                         % (self.source, cols, self.table))
         else:
             if (targetType == '01'):
                 sql = "sfzh,phoneno,'01'"
@@ -173,12 +170,12 @@ class Mapping(object):
                 s1 = user_name_
                 s2 = password_
             else:
-                logging.info('参数错误，请检查！')
+                print('参数错误，请检查！')
                 exit(-1)
-            sql = format("insert into table sgk.t_ml_sgk_relation "
+            sql = format("-- insert into table sgk.t_ml_sgk_relation "
                          "select uuid,%s,'%s',confidence "
                          "from sgk.t_ml_sgk_small_merge_%s "
-                         "where 1=1 %s %s "
+                         "where 1=1 %s %s ;"
                          % (sql, self.table, self.source, s1, s2))
         return sql
 
@@ -202,32 +199,34 @@ class Mapping(object):
         assert isinstance(targetType, str)
         col = []
         # 获取json中的字段，并拼接字符串
-        for k, v in self.mapping_.items():
+        for k, v in self.jField.items():
             # 获取json中配置的字段规则，并进行字段转换
-            rul = self.mapstr['rule'].get(v)
+            rul = self.jBase['rule'].get(v)
             v_ = self._ruleMatching(v, rul, 1)
             v_ = v_ if v_ != '' else 'null'
+            if (k in ['source', 'source_table']):
+                v_ = f"'{v_}'"
             col.append(v_)
         c2_ = ','.join(col)
         return self._buildSql(c2_, targetType)
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
-                        datefmt='%a,%d %b %Y %H:%M:%S',
-                        filename=Properties().get("logFile"),
-                        filemode='a'
-                        )
-    c = Mapping(fileName='../mappings/tb_ml_test.json')
-    print(c.getSql('20'))
-    print(c.getSql('01'))
-    print(c.getSql('02'))
-    print(c.getSql('03'))
-    print(c.getSql('04'))
-    print(c.getSql('05'))
-    print(c.getSql('06'))
-    print(c.getSql('07'))
-    print(c.getSql('08'))
-    print(c.getSql('09'))
-    print(c.getSql('10'))
+    for dirpath, dirnames, filenames in os.walk('../mappings'):
+        for filename in filenames:
+            if filename.endswith('json'):
+                i = os.path.join(dirpath, filename)
+                with open(i, 'r') as f:
+                    print('正在处理【%s】文件' % f.name)
+                    c = ExploteSql(fileName=f.name)
+                    if not os.path.isdir('../sql'):  # 无文件夹时创建
+                        os.makedirs('../sql')
+                    file = os.path.join('../sql', c.table + '.sql')
+                    lis = ['20', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10']
+
+                    with open(file, mode="w+", encoding="utf-8") as fd:
+                        for i in lis:
+                            fd.write(c.getSql(i))
+                            fd.write('\n\n')
+                        fd.flush()
+                        fd.close()

@@ -7,7 +7,7 @@ import sys
 from jsonschema import validate
 
 sys.path.append('..')
-from bin.logger import Logger
+import bin.logger as log
 
 '''
 @author:    anke
@@ -20,35 +20,6 @@ from bin.logger import Logger
 
 
 class ChcekMapping(object):
-    '''
-    schema = {
-        "type": "object",
-        "required": ["systemId", "password", "operator", "ApplicationID", "EnviType", "Params"],
-        "properties": {
-            "systemId": { "type": "string", "minLength": 1},
-            "password": { "type": "string"},
-            "operator": { "type": "string", "minLength": 1},
-            "ApplicationID": { "type": "int"},
-            "EnviType": { "type": "int", "enum": [1, 2, 3]},
-            "Params": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "required": ["Scope", "KeyName", "ValName"],
-                    "properties": {
-                        "Scope": {
-                            "type": "string",
-                            "pattern": "^(\w+|\*|\[[,\d]+\]){3}(\w+|\*|\[[,\d]+\])$"
-                        },
-                        "KeyName": {"type": "string", "minLength": 1},
-                        "ValName": {"type": "string"},
-                    }
-                }
-            },
-        }
-    }
-    '''
-
     _schema = {
         "type": "object",
         "required": ["source", "table", "database", "fieldMapping", "rule"],
@@ -82,12 +53,11 @@ class ChcekMapping(object):
             log.error(validate.exceptions.ValidationError)
             return False
         else:
-            log.info("Json文件格式验证通过！")
+            log.info('Json文件格式验证通过！')
             return True
 
 
 if __name__ == '__main__':
-    log = Logger().logger
     ck = ChcekMapping()
     with open("../mappings/tb_ml_dbm_dbsource.json", 'r', encoding='utf-8') as f:
         # 将类文件对象中的JSON字符串直接转换成Python字典

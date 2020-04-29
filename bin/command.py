@@ -1,9 +1,8 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-import logging
+import bin.logger as log
 
-from cmdThread import CmdThread
-from propertiesUtiil import Properties
+from bin.cmdThread import CmdThread
 import sys
 
 sys.path.append('..')
@@ -42,12 +41,12 @@ class Command(object):
             is_ready = True
             for rely in relies:
                 if rely not in self.complete:
-                    logging.warning('[****命令【%s】依赖命令【%s】，但是依赖命令没有完成****]' % (cmd, rely))
+                    log.warning('[****命令【%s】依赖命令【%s】，但是依赖命令没有完成****]' % (cmd, rely))
                     is_ready = False
             if not is_ready:
-                logging.warning('[****暂时跳过【%s】命令! ****]' % cmd)
+                log.warning('[****暂时跳过【%s】命令! ****]' % cmd)
                 continue
-            logging.info('[****即将开始执行【%s】命令!****]' % cmd)
+            log.info('[****即将开始执行【%s】命令!****]' % cmd)
 
             thr = CmdThread(self.index, cmd)
             self.index = self.index + 1
@@ -71,27 +70,21 @@ class Command(object):
         is_success = True
         for cmdLayer in cmdLayers:
             layerCmds = self.cfg[cmdLayer]
-            logging.info('[****即将开始执行第【%d】层****]' % cmdLayer)
+            log.info('[****即将开始执行第【%d】层****]' % cmdLayer)
             cmds = layerCmds.keys()
             isSucc = self.execute_layer_command(cmds, layerCmds)
             if not isSucc:
-                logging.error('[****任务失败在第【%d】层 ****]' % cmdLayer)
+                log.error('[****任务失败在第【%d】层 ****]' % cmdLayer)
                 is_success = False
                 break
         if is_success:
-            logging.info('[****任务执行成功!****]')
+            log.info('[****任务执行成功!****]')
         else:
-            logging.error('[****任务执行失败!****]')
+            log.error('[****任务执行失败!****]')
         return is_success, self.complete
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
-                        datefmt='%a,%d %b %Y %H:%M:%S',
-                        filename=Properties().get("logFile"),
-                        filemode='a'
-                        )
     cmd = Command(ConfigTask(), [])
     cmd.execute_cmds()
 
