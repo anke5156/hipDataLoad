@@ -15,10 +15,10 @@ import json
 
 
 class ExploreMappingRealtion(object):
-    def __init__(self, database='dbm_service', filePath='../mappings'):
+    def __init__(self, database, outPutPath='../mappings'):
         self.database = database
         self.db = con(f"mysql+pymysql://root:123456@127.0.0.1:3306/{self.database}")
-        self.filePath = filePath
+        self.filePath = outPutPath
         self.table = ''
         self.fieldTransMapping = {
             "uuid": "uuid",
@@ -64,20 +64,18 @@ class ExploreMappingRealtion(object):
                "LEFT JOIN dangan.s_ssd_table_completed c ON a.table_name=c.table_name_after " \
                "LEFT JOIN dangan.s_analyse_data d ON d.sjpc=c.batch_id " \
                "WHERE 1=1 " \
-               "and d.sjly is not null " \
+               "AND d.sjly is not null " \
                f"AND a.table_schema='{table_schema}' " \
                f"AND a.table_name='{table_name}' " \
                "ORDER BY a.table_schema,a.table_name,b.ordinal_position"
 
-    def build(self):
-        with open('./table.txt') as ts:
+    def build(self, tableFile):
+        with open(tableFile) as ts:
             for t in ts.readlines():
                 t = t.replace('\n', '')
                 if (t.strip(' ') == ''):
                     exit(-1)
-                print(t)
                 sql = self._buildSql(t, self.database)
-                # print(sql)
                 lines = self.db.read(sql)
                 jBase = {}
                 jField = {"uuid": "uuid",
@@ -109,9 +107,9 @@ class ExploreMappingRealtion(object):
                     jBase['database'] = l['table_schema']
                     jBase['fieldMapping'] = jField
                     jBase['rule'] = jRule
-
+                print(jBase['database'] + '.' + jBase['table'])
                 loads = json.dumps(jBase, ensure_ascii=False, indent=4)
-                if not os.path.isdir(self.filePath):  # 无文件夹时创建
+                if not os.path.isdir(self.filePath):
                     os.makedirs(self.filePath)
                 file = os.path.join(self.filePath, self.table)
                 with open(file, mode="w+", encoding="utf-8") as fd:
@@ -123,4 +121,4 @@ class ExploreMappingRealtion(object):
 
 if __name__ == '__main__':
     exp = ExploreMappingRealtion('dbm_service')
-    exp.build()
+    exp.build('./table.txt')
