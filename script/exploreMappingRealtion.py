@@ -7,7 +7,7 @@ import json
 '''
 @author:    anke
 @contact:   anke.wang@foxmail.com
-@file:      buildMapping.py
+@file:      exploreMappingRealtion.py
 @time:      2020/4/28 11:12 下午
 
 @desc:      构建json映射工具
@@ -15,12 +15,12 @@ import json
 
 
 class ExploreMappingRealtion(object):
-    def __init__(self, database='dbm_service', filePath='./mappings'):
+    def __init__(self, database='dbm_service', filePath='../mappings'):
         self.database = database
         self.db = con(f"mysql+pymysql://root:123456@127.0.0.1:3306/{self.database}")
         self.filePath = filePath
         self.table = ''
-        self.defatMapping = {
+        self.fieldTransMapping = {
             "uuid": "uuid",
             "身份证": "sfzh",
             "身份证号": "sfzh",
@@ -34,6 +34,28 @@ class ExploreMappingRealtion(object):
             "密码-加密": "password",
             "明文密码": "password"
         }
+        self.sourceMapping = {"12306": "12306",
+                              "126": "126",
+                              "163": "163",
+                              "7k7k": "7k7k",
+                              "acfun": "acfun",
+                              "csdn": "csdn",
+                              "renren": "renren",
+                              "tianya": "tianya",
+                              "xiaomi": "xiaomi",
+                              "珍爱网": "zhenaiwang",
+                              "52房地产": "52fangdichan",
+                              "92hacker": "92hacker",
+                              "118faka": "118faka",
+                              "open": "open",
+                              "zp": "zp",
+                              "曹长青": "caochangqing",
+                              "汉庭": "hanting",
+                              "鲸鱼": "jingyu",
+                              "缅华": "mianhua",
+                              "台湾海外网": "taiwanhaiwaiwang",
+                              "一亿": "yiyi",
+                              "web": "web"}
 
     def _buildSql(self, table_name, table_schema):
         return "SELECT d.sjly,a.table_schema,a.table_name,a.table_comment,b.column_name,b.ordinal_position,b.column_comment " \
@@ -42,6 +64,7 @@ class ExploreMappingRealtion(object):
                "LEFT JOIN dangan.s_ssd_table_completed c ON a.table_name=c.table_name_after " \
                "LEFT JOIN dangan.s_analyse_data d ON d.sjpc=c.batch_id " \
                "WHERE 1=1 " \
+               "and d.sjly is not null " \
                f"AND a.table_schema='{table_schema}' " \
                f"AND a.table_name='{table_name}' " \
                "ORDER BY a.table_schema,a.table_name,b.ordinal_position"
@@ -54,7 +77,7 @@ class ExploreMappingRealtion(object):
                     exit(-1)
                 print(t)
                 sql = self._buildSql(t, self.database)
-                print(sql)
+                # print(sql)
                 lines = self.db.read(sql)
                 jBase = {}
                 jField = {"uuid": "uuid",
@@ -65,15 +88,17 @@ class ExploreMappingRealtion(object):
                           "password": "",
                           "explode_time": "explode_time",
                           "confidence": "confidence",
-                          "source": "",
-                          "source_table": ""}
+                          "source_table": "",
+                          "source": ""}
                 jRule = {"confidence": "confidence"}
 
                 for l in lines:
-                    if l['column_comment'] in self.defatMapping:
-                        jField[self.defatMapping[l['column_comment']]] = l['column_name']
+                    if l['column_comment'] in self.fieldTransMapping:
+                        jField[self.fieldTransMapping[l['column_comment']]] = l['column_name']
                         jRule[l['column_name']] = 'not_null'
 
+                    if l['sjly'] in self.sourceMapping:
+                        l['sjly'] = self.sourceMapping[l['sjly']]
                     jField['source'] = l['sjly']
                     jField['source_table'] = l['table_name']
 
@@ -86,7 +111,6 @@ class ExploreMappingRealtion(object):
                     jBase['rule'] = jRule
 
                 loads = json.dumps(jBase, ensure_ascii=False, indent=4)
-                # print(loads)
                 if not os.path.isdir(self.filePath):  # 无文件夹时创建
                     os.makedirs(self.filePath)
                 file = os.path.join(self.filePath, self.table)
@@ -98,5 +122,5 @@ class ExploreMappingRealtion(object):
 
 
 if __name__ == '__main__':
-    exp = ExploreMappingRealtion()
+    exp = ExploreMappingRealtion('dbm_service')
     exp.build()
