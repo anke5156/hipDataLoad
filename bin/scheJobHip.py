@@ -8,7 +8,7 @@ import time
 sys.path.append('..')
 from bin.logSplit import splitlog
 from bin.cmdThread import CmdThread
-import bin.logger as log
+from bin.loggerPro import LoggerPro, logger
 
 '''
 @author:    anke
@@ -29,7 +29,7 @@ def ScheJobHip(func):
             if line.find('python scheJobHip.py') != -1:
                 numrows = numrows + 1
         if numrows > 1:
-            log.info('不予执行!')
+            logger.info('不予执行!')
         else:
             return func(**kargs)
 
@@ -39,7 +39,7 @@ def ScheJobHip(func):
 def tick():
     # 日志开始切割的标识
     mark = str(time.time())
-    log.info('%s' % mark)
+    logger.info('%s' % mark)
 
     threadList = []
     cnt = 1
@@ -48,7 +48,7 @@ def tick():
             if filename.endswith('sql'):
                 i = os.path.join(dirpath, filename)
                 with open(i, 'r') as f:
-                    log.info('正在处理【%s】文件' % f.name)
+                    logger.info('正在处理【%s】文件' % f.name)
                     thr = CmdThread(cnt, f'hive -f "{f.name}"')
                     threadList.append(thr)
     for t in threadList:
@@ -61,6 +61,7 @@ def tick():
 
 
 if __name__ == '__main__':
+    LoggerPro().config(when='S', backCount=3)
     tick()
     # sched = BlockingScheduler()
     # sched.daemonic = False

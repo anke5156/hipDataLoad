@@ -2,8 +2,6 @@
 # -*- coding: UTF-8 -*-
 import time
 
-from propertiesUtiil import Properties
-
 '''
 @author:    anke
 @contact:   anke.wang@foxmail.com
@@ -16,10 +14,10 @@ from propertiesUtiil import Properties
 
 def splitlog(filename, mark):
     isStart = False
-    logNameDaily = '%s.%s' % (filename, time.strftime('%Y-%m-%d'))
-    logDaily = open(logNameDaily, 'w')
+    # logNameDaily = '%s.%s' % (filename, time.strftime('%Y-%m-%d'))
+    # logDaily = open(logNameDaily, 'w')
 
-    logNameCmdsDaily = '%s.excute_command.%s' % (filename,time.strftime('%Y-%m-%d'))
+    logNameCmdsDaily = '%s.cmd.%s' % (filename, time.strftime('%Y-%m-%d'))
     logDailyExcute = open(logNameCmdsDaily, 'w')
     with open(filename, 'r+') as f:
         while True:
@@ -29,13 +27,13 @@ def splitlog(filename, mark):
             if line.find(mark) != -1:
                 isStart = True
             if isStart:
-                logDaily.write('%s' % line)
-                if (line.find('EXCUTE_DONE')!=-1):
+                # logDaily.write('%s' % line)
+                if (line.find('EXCUTE_DONE') != -1):
                     logDailyExcute.write('%s' % line)
         f.close()
-        logDaily.close()
+        # logDaily.close()
         logDailyExcute.close()
 
 
 if __name__ == '__main__':
-    splitlog(Properties().get("logFile"), '1587863489.224271')
+    splitlog('../logs/hipdataload.log', '1587863489.224271')

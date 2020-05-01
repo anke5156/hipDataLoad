@@ -1,2 +1,0 @@
-2020-04-30 00:38:58,481 cmdThread.py[line:38] INFO [EXCUTE_DONE]hive -f "../sql/tb_ml_dbm_users.sql"
-2020-04-30 00:38:58,482 cmdThread.py[line:38] INFO [EXCUTE_DONE]hive -f "../sql/tb_ml_dbm_dbsource.sql"

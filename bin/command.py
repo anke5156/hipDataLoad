@@ -1,12 +1,13 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-import bin.logger as log
 
-from bin.cmdThread import CmdThread
+
 import sys
 
 sys.path.append('..')
 from config.configTask import ConfigTask
+from bin.loggerPro import LoggerPro,logger
+from bin.cmdThread import CmdThread
 
 '''
 @author:    anke
@@ -41,12 +42,12 @@ class Command(object):
             is_ready = True
             for rely in relies:
                 if rely not in self.complete:
-                    log.warning('[****命令【%s】依赖命令【%s】，但是依赖命令没有完成****]' % (cmd, rely))
+                    logger.warning('[****命令【%s】依赖命令【%s】，但是依赖命令没有完成****]' % (cmd, rely))
                     is_ready = False
             if not is_ready:
-                log.warning('[****暂时跳过【%s】命令! ****]' % cmd)
+                logger.warning('[****暂时跳过【%s】命令! ****]' % cmd)
                 continue
-            log.info('[****即将开始执行【%s】命令!****]' % cmd)
+            logger.info('[****即将开始执行【%s】命令!****]' % cmd)
 
             thr = CmdThread(self.index, cmd)
             self.index = self.index + 1
@@ -70,21 +71,22 @@ class Command(object):
         is_success = True
         for cmdLayer in cmdLayers:
             layerCmds = self.cfg[cmdLayer]
-            log.info('[****即将开始执行第【%d】层****]' % cmdLayer)
+            logger.info('[****即将开始执行第【%d】层****]' % cmdLayer)
             cmds = layerCmds.keys()
             isSucc = self.execute_layer_command(cmds, layerCmds)
             if not isSucc:
-                log.error('[****任务失败在第【%d】层 ****]' % cmdLayer)
+                logger.error('[****任务失败在第【%d】层 ****]' % cmdLayer)
                 is_success = False
                 break
         if is_success:
-            log.info('[****任务执行成功!****]')
+            logger.info('[****任务执行成功!****]')
         else:
-            log.error('[****任务执行失败!****]')
+            logger.error('[****任务执行失败!****]')
         return is_success, self.complete
 
 
 if __name__ == '__main__':
+    LoggerPro().config()
     cmd = Command(ConfigTask(), [])
     cmd.execute_cmds()
 

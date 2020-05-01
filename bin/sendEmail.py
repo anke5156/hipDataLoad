@@ -6,7 +6,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
 
-from propertiesUtiil import Properties
+from bin.propertiesUtiil import Properties
 
 '''
 @author:    anke

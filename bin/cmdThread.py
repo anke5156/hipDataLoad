@@ -3,12 +3,10 @@
 import os
 import sys
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(BASE_DIR)
 from threading import Thread
-import subprocess
+
 sys.path.append('..')
-import bin.logger as log
+from bin.loggerPro import LoggerPro, logger
 
 '''
 @author:    anke
@@ -34,16 +32,17 @@ class CmdThread(Thread):
             result = '假装我就是执行结果'
             # status, result = subprocess.getstatusoutput(self.cmd)
             if status == 0:
-                log.info('[****命令【%s】执行成功，退出进程!****]' % self.cmd)
-                log.info('[EXCUTE_DONE]%s' % self.cmd)
-                log.info('[****执行结果【%s】****]' % result)
+                logger.info('[****命令【%s】执行成功，退出进程!****]' % self.cmd)
+                logger.info('[EXCUTE_DONE]%s' % self.cmd)
+                logger.info('[****执行结果【%s】****]' % result)
                 self.isSuccess = True
             else:
-                log.error('[****命令【%s】执行失败! status=【%d】 result=【%s】进程退出!****]'
-                          % (self.cmd, status, result))
-                log.error('[EXCUTE_DONE]%s' % self.cmd)
+                logger.error('[****命令【%s】执行失败! status=【%d】 result=【%s】进程退出!****]'
+                             % (self.cmd, status, result))
+                logger.error('[EXCUTE_DONE]%s' % self.cmd)
 
 
 if __name__ == '__main__':
+    LoggerPro().config()
     cm = CmdThread(1, "pwd", )
     cm.run()

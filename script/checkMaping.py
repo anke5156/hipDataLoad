@@ -2,12 +2,14 @@
 # -*- coding: UTF-8 -*-
 
 import json
+import os
 import sys
+import time
 
 from jsonschema import validate
 
 sys.path.append('..')
-import bin.logger as log
+from bin.loggerPro import LoggerPro, logger
 
 '''
 @author:    anke
@@ -20,49 +22,86 @@ import bin.logger as log
 
 
 class ChcekMapping(object):
-    _schema = {
-        "type": "object",
-        "required": ["source", "table", "database", "fieldMapping", "rule"],
-        "properties": {
-            "source": {"type": "string", "minLength": 1},
-            "table": {"type": "string", "minLength": 1},
-            "database": {"type": "string", "minLength": 1},
-            "rule": {"type": "object"},
-            "fieldMapping": {
-                "type": "object",
-                "required": ["uuid", "sfzh", "user_name", "email", "phoneno", "password", "explode_time", "confidence"],
-                "properties": {
-                    "uuid": {"type": "string", "minLength": 1},
-                    "sfzh": {"type": "string"},
-                    "user_name": {"type": "string"},
-                    "email": {"type": "string"},
-                    "phoneno": {"type": "string"},
-                    "password": {"type": "string"},
-                    "explode_time": {"type": "string"},
-                    "confidence": {"type": "string"}
+    def __init__(self):
+        self._schema = {
+            "type": "object",
+            "required": ["source", "table", "database", "fieldMapping", "rule"],
+            "properties": {
+                "source": {"type": "string", "minLength": 1},
+                "table": {"type": "string", "minLength": 1},
+                "database": {"type": "string", "minLength": 1},
+                "rule": {"type": "object"},
+                "fieldMapping": {
+                    "type": "object",
+                    "required": ["uuid", "sfzh", "user_name", "email", "phoneno", "password", "explode_time",
+                                 "confidence"],
+                    "properties": {
+                        "uuid": {"type": "string", "minLength": 1},
+                        "sfzh": {"type": "string"},
+                        "user_name": {"type": "string"},
+                        "email": {"type": "string"},
+                        "phoneno": {"type": "string"},
+                        "password": {"type": "string"},
+                        "explode_time": {"type": "string"},
+                        "confidence": {"type": "string"}
+                    }
                 }
             }
         }
-    }
 
-    def check(self, jsonStr):
+    def _checkJsonStr(self, jsonStr):
+        """
+        校验核心方法
+        :param jsonStr: 待校验字符串
+        :return: True False
+        """
         try:
             validate(instance=jsonStr, schema=self._schema)
-        except Exception:
-            log.error(f"Json文件格式错误，需要对应模板格式！请检查json文件【{jsonStr}】")
-            log.error(validate.exceptions.ValidationError)
+        except Exception as e:
+            logger.error(e)
             return False
         else:
-            log.info('Json文件格式验证通过！')
             return True
+
+    def _checkJsonFile(self, jsonFile):
+        """
+        对json文件进行json字符串提取
+        :param jsonFile:
+        :return:
+        """
+        with open(jsonFile, mode="r", encoding="utf-8") as jf:
+            jsonStr_ = json.load(jf)
+            jf.flush()
+            jf.close()
+            return self._checkJsonStr(jsonStr_)
+
+    def checkJson(self, json):
+        """
+        对文件或者json字符串进行模板匹配
+        :param json:
+        :return:
+        """
+        is_json = False
+        if isinstance(json, str) and os.path.isfile(json):
+            if self._checkJsonFile(json):
+                time.sleep(1)
+                logger.info(f'Json文件【{json}】验证通过！')
+                is_json = True
+            else:
+                logger.error(f"Json文件【{json}】错误，需要对应模板格式！")
+        else:
+            if self._checkJsonStr(json):
+                logger.info(f'Json格式数据验证通过！')
+                is_json = True
+            else:
+                logger.error("Json格式数据错误，需要对应模板格式！请检查上送数据")
+        return is_json
 
 
 if __name__ == '__main__':
+    LoggerPro().config()
     ck = ChcekMapping()
-    with open("../mappings/tb_ml_dbm_dbsource.json", 'r', encoding='utf-8') as f:
-        # 将类文件对象中的JSON字符串直接转换成Python字典
-        jsonStr_ = json.load(f)
-        log.info(ck.check(jsonStr_))
+    ck.checkJson('../mappings/tb_ml_dbm_dbsource.json')
 
     succData = {
         "source": "12306",
@@ -87,7 +126,7 @@ if __name__ == '__main__':
         },
         "test": "test"
     }
-    log.info(ck.check(succData))
+    logger.info(f'succData：{ck.checkJson(succData)}')
 
     errData = {
         "err": "12306",
@@ -113,4 +152,4 @@ if __name__ == '__main__':
         },
         "test": "test"
     }
-    log.info(ck.check(errData))
+    # logger.info(f'errData：{ck.checkJson(errData)}')

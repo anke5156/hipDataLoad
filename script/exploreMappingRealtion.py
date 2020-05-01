@@ -1,8 +1,13 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
+import sys
+
 from pydbclib import connect as con
 import os
 import json
+
+sys.path.append('..')
+from bin.loggerPro import LoggerPro, logger
 
 '''
 @author:    anke
@@ -17,6 +22,7 @@ import json
 class ExploreMappingRealtion(object):
     def __init__(self, database, outPutPath='../mappings'):
         self.database = database
+        # self.db = con(f"mysql+pymysql://root:123456@172.20.1.11:3306/{self.database}")
         self.db = con(f"mysql+pymysql://root:123456@127.0.0.1:3306/{self.database}")
         self.filePath = outPutPath
         self.table = ''
@@ -34,40 +40,44 @@ class ExploreMappingRealtion(object):
             "密码-加密": "password",
             "明文密码": "password"
         }
-        self.sourceMapping = {"12306": "12306",
-                              "126": "126",
-                              "163": "163",
-                              "7k7k": "7k7k",
-                              "acfun": "acfun",
-                              "csdn": "csdn",
-                              "renren": "renren",
-                              "tianya": "tianya",
-                              "xiaomi": "xiaomi",
-                              "珍爱网": "zhenaiwang",
-                              "52房地产": "52fangdichan",
-                              "92hacker": "92hacker",
-                              "118faka": "118faka",
-                              "open": "open",
-                              "zp": "zp",
-                              "曹长青": "caochangqing",
-                              "汉庭": "hanting",
-                              "鲸鱼": "jingyu",
-                              "缅华": "mianhua",
-                              "台湾海外网": "taiwanhaiwaiwang",
-                              "一亿": "yiyi",
-                              "web": "web"}
+        self.sourceTransMapping = {"12306": "12306",
+                                   "126": "126",
+                                   "163": "163",
+                                   "7k7k": "7k7k",
+                                   "acfun": "acfun",
+                                   "csdn": "csdn",
+                                   "renren": "renren",
+                                   "tianya": "tianya",
+                                   "xiaomi": "xiaomi",
+                                   "珍爱网": "zhenaiwang",
+                                   "52房地产": "52fangdichan",
+                                   "92hacker": "92hacker",
+                                   "118faka": "118faka",
+                                   "open": "open",
+                                   "zp": "zp",
+                                   "曹长青": "caochangqing",
+                                   "汉庭": "hanting",
+                                   "鲸鱼": "jingyu",
+                                   "缅华": "mianhua",
+                                   "台湾海外网": "taiwanhaiwaiwang",
+                                   "一亿": "yiyi",
+                                   "web": "web"}
 
-    def _buildSql(self, table_name, table_schema):
-        return "SELECT d.sjly,a.table_schema,a.table_name,a.table_comment,b.column_name,b.ordinal_position,b.column_comment " \
-               "FROM information_schema.TABLES a " \
-               "LEFT JOIN information_schema.COLUMNS b ON a.table_schema=b.table_schema AND a.table_name=b.table_name " \
-               "LEFT JOIN dangan.s_ssd_table_completed c ON a.table_name=c.table_name_after " \
-               "LEFT JOIN dangan.s_analyse_data d ON d.sjpc=c.batch_id " \
-               "WHERE 1=1 " \
-               "AND d.sjly is not null " \
-               f"AND a.table_schema='{table_schema}' " \
-               f"AND a.table_name='{table_name}' " \
-               "ORDER BY a.table_schema,a.table_name,b.ordinal_position"
+    def _buildSql(self, table, database):
+        sql = f'''
+        SELECT d.sjly,a.table_schema,a.table_name,a.table_comment,b.column_name,b.ordinal_position,b.column_comment
+        FROM information_schema.TABLES a
+        LEFT JOIN information_schema.COLUMNS b ON a.table_schema=b.table_schema AND a.table_name=b.table_name
+        LEFT JOIN dangan.s_ssd_table_completed c ON a.table_name=c.table_name_after
+        LEFT JOIN dangan.s_analyse_data d ON d.sjpc=c.batch_id
+        WHERE 1=1
+        AND d.sjly is not null
+        AND a.table_schema='{database}'
+        AND a.table_name='{table}'
+        ORDER BY a.table_schema,a.table_name,b.ordinal_position
+        '''
+        # sql = f"select * from dangan.t_ml_tempdddddddd where 1=1 and table_name='{table}'"
+        return sql
 
     def build(self, tableFile):
         with open(tableFile) as ts:
@@ -75,6 +85,8 @@ class ExploreMappingRealtion(object):
                 t = t.replace('\n', '')
                 if (t.strip(' ') == ''):
                     exit(-1)
+                elif t.startswith('#'):
+                    continue
                 sql = self._buildSql(t, self.database)
                 lines = self.db.read(sql)
                 jBase = {}
@@ -95,8 +107,8 @@ class ExploreMappingRealtion(object):
                         jField[self.fieldTransMapping[l['column_comment']]] = l['column_name']
                         jRule[l['column_name']] = 'not_null'
 
-                    if l['sjly'] in self.sourceMapping:
-                        l['sjly'] = self.sourceMapping[l['sjly']]
+                    if l['sjly'] in self.sourceTransMapping:
+                        l['sjly'] = self.sourceTransMapping[l['sjly']]
                     jField['source'] = l['sjly']
                     jField['source_table'] = l['table_name']
 
@@ -107,7 +119,10 @@ class ExploreMappingRealtion(object):
                     jBase['database'] = l['table_schema']
                     jBase['fieldMapping'] = jField
                     jBase['rule'] = jRule
-                print(jBase['database'] + '.' + jBase['table'])
+                if not bool(jBase):
+                    logger.warning(f'【{t}】表没有找到需要构建的mapping，请检查table.txt文件和数据库')
+                    continue
+                logger.info(jBase['database'] + '.' + jBase['table'])
                 loads = json.dumps(jBase, ensure_ascii=False, indent=4)
                 if not os.path.isdir(self.filePath):
                     os.makedirs(self.filePath)
@@ -120,5 +135,7 @@ class ExploreMappingRealtion(object):
 
 
 if __name__ == '__main__':
+    LoggerPro().config()
+
     exp = ExploreMappingRealtion('dbm_service')
     exp.build('./table.txt')

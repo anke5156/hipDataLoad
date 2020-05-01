@@ -3,8 +3,11 @@
 
 import json
 import os
+import sys
 
+sys.path.append('..')
 from script.checkMaping import ChcekMapping
+from bin.loggerPro import LoggerPro, logger
 
 '''
 @author:    anke
@@ -19,11 +22,11 @@ from script.checkMaping import ChcekMapping
 class ExploteSql(object):
     def __init__(self, fileName):
         self.fileName = fileName
+        assert ChcekMapping().checkJson(self.fileName)
+        # 校验配置的mapping数据格式
         with open(self.fileName, 'r', encoding='utf-8') as f:
             # 将类文件对象中的JSON字符串直接转换成Python字典
             self.jBase = json.load(f)
-            # 校验配置的mapping数据格式
-            assert ChcekMapping().check(self.jBase)
             # 获取json中的表信息
             self.source = self.jBase['source']
             self.database = self.jBase['database']
@@ -170,7 +173,7 @@ class ExploteSql(object):
                 s1 = user_name_
                 s2 = password_
             else:
-                print('参数错误，请检查！')
+                logger.error('参数错误，请检查！')
                 exit(-1)
             sql = format("-- insert into table sgk.t_ml_sgk_relation "
                          "select uuid,%s,'%s',confidence "
@@ -212,13 +215,14 @@ class ExploteSql(object):
 
 
 if __name__ == '__main__':
-    for dirpath, dirnames, filenames in os.walk('../mappings'):
-        for filename in filenames:
-            if filename.endswith('json'):
-                i = os.path.join(dirpath, filename)
+    LoggerPro().config()
+    for dirPath, dirNames, fileNames in os.walk('../mappings'):
+        for fileName in fileNames:
+            if fileName.endswith('json'):
+                i = os.path.join(dirPath, fileName)
                 with open(i, 'r') as f:
-                    print('正在处理【%s】文件' % f.name)
-                    c = ExploteSql(fileName=f.name)
+                    c = ExploteSql(f.name)
+                    logger.info(f'正在处理【{f.name}】文件')
                     if not os.path.isdir('../sql'):  # 无文件夹时创建
                         os.makedirs('../sql')
                     file = os.path.join('../sql', c.table + '.sql')
