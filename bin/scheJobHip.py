@@ -9,6 +9,8 @@ sys.path.append('..')
 from bin.logSplit import splitlog
 from bin.cmdThread import CmdThread
 from bin.loggerPro import LoggerPro, logger
+from script.exploreMappingRealtion import ExploreMappingRealtion
+from script.exploreSql import ExploteSql
 
 '''
 @author:    anke
@@ -40,6 +42,30 @@ def tick():
     # 日志开始切割的标识
     mark = str(time.time())
     logger.info('%s' % mark)
+
+    # 1.先建mapping
+    expMapping = ExploreMappingRealtion('dbm_service')
+    expMapping.build('../script/table.txt')
+
+    # 2.根据mapping构建sql
+    for dirPath, dirNames, fileNames in os.walk('../mappings'):
+        for fileName in fileNames:
+            if fileName.endswith('json'):
+                i = os.path.join(dirPath, fileName)
+                with open(i, 'r') as f:
+                    c = ExploteSql(f.name)
+                    logger.info(f'正在处理【{f.name}】文件')
+                    if not os.path.isdir('../sql'):  # 无文件夹时创建
+                        os.makedirs('../sql')
+                    file = os.path.join('../sql', c.table + '.sql')
+                    lis = ['20', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10']
+
+                    with open(file, mode="w+", encoding="utf-8") as fd:
+                        for i in lis:
+                            fd.write(c.getSql(i))
+                            fd.write('\n\n')
+                        fd.flush()
+                        fd.close()
 
     threadList = []
     cnt = 1

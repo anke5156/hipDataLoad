@@ -174,7 +174,6 @@ class ExploteSql(object):
                 s2 = password_
             else:
                 logger.error('参数错误，请检查！')
-                exit(-1)
             sql = format("-- insert into table sgk.t_ml_sgk_relation "
                          "select uuid,%s,'%s',confidence "
                          "from sgk.t_ml_sgk_small_merge_%s "

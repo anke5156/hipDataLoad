@@ -84,7 +84,7 @@ class ExploreMappingRealtion(object):
             for t in ts.readlines():
                 t = t.replace('\n', '')
                 if (t.strip(' ') == ''):
-                    exit(-1)
+                    continue
                 elif t.startswith('#'):
                     continue
                 sql = self._buildSql(t, self.database)
