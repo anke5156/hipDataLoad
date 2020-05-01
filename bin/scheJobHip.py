@@ -61,7 +61,7 @@ def tick():
 
 
 if __name__ == '__main__':
-    LoggerPro().config(when='S', backCount=3)
+    LoggerPro().config(when='D', backCount=3)
     tick()
     # sched = BlockingScheduler()
     # sched.daemonic = False
