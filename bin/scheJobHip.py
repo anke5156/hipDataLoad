@@ -4,6 +4,7 @@ import os
 import subprocess
 import sys
 import time
+from functools import wraps
 
 sys.path.append('..')
 from bin.logSplit import splitlog
@@ -23,6 +24,7 @@ from script.exploreSql import ExploteSql
 
 
 def ScheJobHip(func):
+    @wraps(func)
     def wrapper(*args, **kargs):
         sta, res = subprocess.getstatusoutput('ps -ef|grep scheJobHip.py')
         print(res)
