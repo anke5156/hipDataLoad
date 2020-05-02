@@ -6,8 +6,6 @@ import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
 
-from bin.propertiesUtiil import Properties
-
 '''
 @author:    anke
 @contact:   anke.wang@foxmail.com
@@ -20,11 +18,11 @@ from bin.propertiesUtiil import Properties
 
 class Mail(object):
     def __init__(self):
-        self.mailhost = Properties().get("emailHost")
-        self.mailport = Properties().get("emailPort")
-        self.mailuser = Properties().get("emailUser")
-        self.mailpass = Properties().get("emailPass")
-        self.receiver = Properties().get("emailReceiver")
+        self.mailhost = 'smtp.qq.com'
+        self.mailport = '465'
+        self.mailuser = 'anke.wang@foxmail.com'
+        self.mailpass = ''
+        self.receiver = 'anke.wang@foxmail.com'
 
     def send(self, subjecttxt='NB Health Report', ctt=''):
         message = MIMEText(ctt, 'plain', 'utf-8')
