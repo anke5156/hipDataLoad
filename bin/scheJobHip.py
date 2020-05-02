@@ -28,18 +28,18 @@ def ScheJobHip(func):
         print(res)
         numrows = 0
         for line in res.split('\n'):
-            if line.find('python scheJobHip.py') != -1:
+            if line.find('Python scheJobHip.py') != -1:
                 numrows = numrows + 1
         if numrows > 1:
-            logger.info('不予执行!')
+            logger.info('当前程序正在运行，不予执行!')
         else:
             return func(**kargs)
 
     return wrapper
 
 
+@ScheJobHip
 def tick():
-    # 日志开始切割的标识
     mark = str(time.time())
     logger.info('%s' % mark)
 
