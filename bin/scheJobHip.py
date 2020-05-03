@@ -27,7 +27,7 @@ def ScheJobHip(func):
     @wraps(func)
     def wrapper(*args, **kargs):
         sta, res = subprocess.getstatusoutput('ps -ef|grep scheJobHip.py')
-        print(res)
+        # print(res)
         numrows = 0
         for line in res.split('\n'):
             if line.find('Python scheJobHip.py') != -1:
@@ -50,32 +50,30 @@ def tick():
     expMapping.build('../script/table.txt')
 
     # 2.根据mapping构建sql
-    for dirPath, dirNames, fileNames in os.walk('../mappings'):
-        for fileName in fileNames:
-            if fileName.endswith('json'):
-                i = os.path.join(dirPath, fileName)
-                with open(i, 'r') as f:
-                    c = ExploteSql(f.name)
+    for root, dirs, files in os.walk('../mappings'):
+        for file in files:
+            if file.endswith('json'):
+                file_ = os.path.join(root, file)
+                with open(file_, 'r') as f:
+                    expSql = ExploteSql(f.name)
                     logger.info(f'正在处理【{f.name}】文件')
-                    if not os.path.isdir('../sql'):  # 无文件夹时创建
+                    if not os.path.isdir('../sql'):
                         os.makedirs('../sql')
-                    file = os.path.join('../sql', c.table + '.sql')
+                    file = os.path.join('../sql', expSql.table + '.sql')
                     lis = ['20', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10']
 
                     with open(file, mode="w+", encoding="utf-8") as fd:
-                        for i in lis:
-                            fd.write(c.getSql(i))
+                        for file_ in lis:
+                            fd.write(expSql.getSql(file_))
                             fd.write('\n\n')
-                        fd.flush()
-                        fd.close()
 
     threadList = []
     cnt = 1
-    for dirpath, dirnames, filenames in os.walk('../sql'):
-        for filename in filenames:
-            if filename.endswith('sql'):
-                i = os.path.join(dirpath, filename)
-                with open(i, 'r') as f:
+    for root, dirs, files in os.walk('../sql'):
+        for file in files:
+            if file.endswith('sql'):
+                file_ = os.path.join(root, file)
+                with open(file_, 'r') as f:
                     logger.info('正在处理【%s】文件' % f.name)
                     thr = CmdThread(cnt, f'hive -f "{f.name}"')
                     threadList.append(thr)
