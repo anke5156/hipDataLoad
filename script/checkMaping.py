@@ -4,7 +4,6 @@
 import json
 import os
 import sys
-import time
 
 from jsonschema import validate
 
@@ -84,7 +83,6 @@ class ChcekMapping(object):
         is_json = False
         if isinstance(json, str) and os.path.isfile(json):
             if self._checkJsonFile(json):
-                time.sleep(1)
                 logger.info(f'Json文件【{json}】验证通过！')
                 is_json = True
             else:
