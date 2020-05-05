@@ -14,26 +14,30 @@
 `nohup python scheJobHip.py &`
 
 **工程结构**
->.  
-|____bin  代码路径  
+>|____bin  
 | |____command.py  
-| |____propertiesUtiil.py      
-| |____transforData.py  
-| |____checkMaping.py  
 | |____logSplit.py  
+| |____sendEmail.py  
 | |____scheJobHip.py  
-| |____assemblyTask.py  
+| |____loggerPro.py  
 | |____cmdThread.py  
-|____config  配置文件路基  
-| |____config.conf  
+|____config  
+| |_______init__.py  
 | |____configTask.py  
 |____script  
+| |____exploreSql.py  
+| |____checkMaping.py  
+| |____exploreMappingRealtion.py  
+| |____table.txt  
 |____README.md  
-|____logs  日志文件路基  
+|____logs  
+| |____hipdataload.log.cmd.2020-05-01  
 | |____hipdataload.log  
-| |____hipdataload.log.2020-04-26     
-|____mappings  映射文件路径  
-| |____tb_ml_test2.json  
-| |____tb_ml_test.json  
-|____sql  执行sql路径  
-| |____t_ml_ttt.sql  
+| |____hipdataload.log.cmd.2020-05-03  
+| |____hipdataload.log.cmd.2020-05-02  
+|____mappings  
+| |____tb_ml_dbm_users.json  
+| |____tb_ml_dbm_dbsource.json  
+|____sql  
+| |____tb_ml_dbm_users.sql  
+| |____tb_ml_dbm_dbsource.sql  
